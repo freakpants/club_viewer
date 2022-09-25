@@ -58,6 +58,50 @@ const Nation = (props) => {
   );
 };
 
+const League = (props) => {
+  let imageLink =
+    "https://cdn.futbin.com/content/fifa23/img/league/" +
+    props.leagueId +
+    ".png";
+  return (
+    <Card elevation={0} style={{ width: "70px", height: "110px", background: "black", marginBottom: "10px" }}>
+      <div style={{ position: "relative" }}>
+        <CardMedia
+          style={{ width: "70px" }}
+          component="img"
+          image={imageLink}
+        />
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: "60px",
+            left: "0px",
+          }}
+        >
+          <Typography
+            style={{
+              color: "white",
+              fontFamily: "UltimateTeamCondensed",
+              fontSize: "2rem",
+              fontWeight: 700,
+            }}
+            variant="h6"
+            component="div"
+            gutterBottom
+          >
+            {props.count}
+          </Typography>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
 const SimpleCard = (props) => {
   return (
     <Card elevation={0} style={{ width: "175px" }}>
@@ -115,12 +159,14 @@ class App extends Component {
       untradeable: 0,
       tradeable: 0,
       nationsCount: [],
+      leaguesCount: [],
     };
 
     axios.post("http://localhost/fut/getOwnedPlayers.php").then((response) => {
       // manipulate the response here
       let players = response.data;
       let nationsCount = [];
+      let leaguesCount = [];
       console.log(players);
       this.setState({ players: players });
       players.forEach((player) => {
@@ -180,6 +226,15 @@ class App extends Component {
           // else create new object with nation id and count
           nationsCount[player.nationId] = 1;
         }
+
+        // if league id already exists in array, increment count
+        if (leaguesCount[player.leagueId]) {
+          leaguesCount[player.leagueId] += 1;
+        } else {
+          // else create new object with league id and count
+          leaguesCount[player.leagueId] = 1;
+        }
+
       });
 
       // go through each nation and add it to a new array
@@ -190,11 +245,21 @@ class App extends Component {
           count: nationsCount[nation],
         });
       }
-
       // sort array by count
       nations.sort((a, b) => b.count - a.count);
-
       this.setState({ nationsCount: nations });
+
+      // go through each league and add it to a new array
+      let leagues = [];
+      for (let league in leaguesCount) {
+        leagues.push({
+          leagueId: league,
+          count: leaguesCount[league],
+        });
+      }
+      // sort array by count
+      leagues.sort((a, b) => b.count - a.count);
+      this.setState({ leaguesCount: leagues });
     });
   }
 
@@ -225,7 +290,20 @@ class App extends Component {
                   </Grid>
                 ))}
               </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid container>
+            <Grid item xs={3}></Grid>
+            <Grid item xs={6}>
+              <Grid container>
+                {this.state.leaguesCount.map((league) => (
+                  <Grid item xs={1}>
+                    <League leagueId={league.leagueId} count={league.count} />
+                  </Grid>
+                ))}
               </Grid>
+            </Grid>
           </Grid>
 
           <Grid container>
