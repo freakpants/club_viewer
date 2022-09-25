@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -142,6 +142,76 @@ const SimpleCard = (props) => {
   );
 };
 
+const PlayerCard = (props) => {
+  const { definitionId, firstName, lastName, console_price, rating, rareflag } = props.player;
+  let imageLink =
+    "https://cdn.futbin.com/content/fifa23/img/players/" + definitionId
+     +
+    ".png";
+  let cardImage = BronzeCommon;
+  if(parseInt(rating) > 74 && rareflag === "1"){
+    cardImage = GoldRare;
+  }
+  return (
+    <Card elevation={0} style={{ width: "400px", height: "700px", position: "relative" }}>
+      <div style={{ position: "relative" }}>
+        <CardMedia
+          style={{ width: "175px", position: "absolute", top: "116px", left: "165px", zIndex: 1 }}
+          component="img"
+          image={imageLink}
+        />
+        <CardMedia
+          style={{ width: "400px", position: "absolute", top: "0px", left: "0px" }}
+          component="img"
+          image={cardImage}
+        />
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: "60px",
+            left: "0px",
+          }}
+        >
+          <Typography
+            style={{
+              color: props.textColor,
+              fontFamily: "UltimateTeamCondensed",
+              fontSize: "2rem",
+              fontWeight: 700,
+              position: "absolute",
+              top: "250px",
+            }}
+            component="div"
+            gutterBottom
+          >
+            {firstName} {lastName}
+          </Typography>
+          <Typography
+            style={{
+              color: props.textColor,
+              fontFamily: "UltimateTeamCondensed",
+              fontSize: "2rem",
+              fontWeight: 700,
+              position: "absolute",
+              top: "300px",
+            }}
+            component="div"
+            gutterBottom
+          >
+             {console_price}
+          </Typography>
+
+        </div>
+      </div>
+    </Card>
+  );
+};
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -160,16 +230,28 @@ class App extends Component {
       tradeable: 0,
       nationsCount: [],
       leaguesCount: [],
+      mostExpensiveTradeablePlayer: ""
     };
 
     axios.post("http://localhost/fut/getOwnedPlayers.php").then((response) => {
       // manipulate the response here
       let players = response.data;
+      console.log(players);
       let nationsCount = [];
       let leaguesCount = [];
-      console.log(players);
       this.setState({ players: players });
+      let mostExpensiveTradeablePlayer = "";
       players.forEach((player) => {
+        if(mostExpensiveTradeablePlayer === ""){
+          mostExpensiveTradeablePlayer = player;
+        } else {
+          if(parseInt(player.console_price) > parseInt(mostExpensiveTradeablePlayer.console_price)){
+            if(player.untradeable === "0" && player.loaned === "0"){
+              mostExpensiveTradeablePlayer = player;
+            }
+          }
+        }
+        
         if (player.rating < 65) {
           if (player.rareflag == 0) {
             this.setState((prevState) => ({
@@ -260,6 +342,8 @@ class App extends Component {
       // sort array by count
       leagues.sort((a, b) => b.count - a.count);
       this.setState({ leaguesCount: leagues });
+
+      this.setState({ mostExpensiveTradeablePlayer: mostExpensiveTradeablePlayer });
     });
   }
 
@@ -394,6 +478,25 @@ class App extends Component {
               </Grid>
             </Grid>
           </Grid>
+
+          <Box
+  display="flex"
+  justifyContent="center"
+  alignItems="center"
+>
+              <Typography variant="h4" gutterBottom>
+                  Most expensive tradeable player
+              </Typography>
+              </Box>
+              <Box
+  display="flex"
+  justifyContent="center"
+  alignItems="center"
+>
+                    <PlayerCard
+                      player={this.state.mostExpensiveTradeablePlayer}
+                    />
+          </Box>
         </Box>
       </ThemeProvider>
     );
