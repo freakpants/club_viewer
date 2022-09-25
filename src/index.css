@@ -11,3 +11,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+body{
+  text-transform: uppercase;
+}
+
+@font-face {
+  font-family: "UltimateTeamCondensed";
+  src: url("fonts/UltimateTeamCondensed.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@font-face {
+  font-family: "Matroska";
+  src: url("fonts/MATROSKA.ttf.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
