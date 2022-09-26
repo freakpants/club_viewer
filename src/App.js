@@ -9,9 +9,11 @@ import SilverCommon from "./cards/cards_bg_e_1_0_2.png";
 import SilverRare from "./cards/cards_bg_e_1_1_2.png";
 import GoldCommon from "./cards/cards_bg_e_1_0_3.png";
 import GoldRare from "./cards/cards_bg_e_1_1_3.png";
+import Conmebol from "./cards/cards_bg_e_1_53_0.png";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
+import Star from "./assets/star.png";
 
 /* https://cdn.futbin.com/content/fifa23/img/nation/38.png */
 const Nation = (props) => {
@@ -64,7 +66,15 @@ const League = (props) => {
     props.leagueId +
     ".png";
   return (
-    <Card elevation={0} style={{ width: "70px", height: "110px", background: "black", marginBottom: "10px" }}>
+    <Card
+      elevation={0}
+      style={{
+        width: "70px",
+        height: "110px",
+        background: "#202020",
+        marginBottom: "10px",
+      }}
+    >
       <div style={{ position: "relative" }}>
         <CardMedia
           style={{ width: "70px" }}
@@ -143,72 +153,108 @@ const SimpleCard = (props) => {
 };
 
 const PlayerCard = (props) => {
-  const { definitionId, firstName, lastName, console_price, rating, rareflag } = props.player;
+  const {
+    definitionId,
+    firstName,
+    lastName,
+    knownAs,
+    console_price,
+    rating,
+    rareflag,
+    teamId,
+    playerId,
+    nationId,
+    pac,
+    pas,
+    phy,
+    sho,
+    dri,
+    def,
+    preferredPosition
+  } = props.player;
   let imageLink =
-    "https://cdn.futbin.com/content/fifa23/img/players/" + definitionId
-     +
+    "https://cdn.futbin.com/content/fifa23/img/players/" +
+    definitionId +
     ".png";
+  let badge =
+    "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
   let cardImage = BronzeCommon;
-  if(parseInt(rating) > 74 && rareflag === "1"){
-    cardImage = GoldRare;
+  if (parseInt(rating) > 74 ) {
+    if(rareflag == 1) {
+      cardImage = GoldRare;
+    } else {
+      cardImage = GoldCommon;
+    }
   }
-  return (
-    <Card elevation={0} style={{ width: "400px", height: "700px", position: "relative" }}>
-      <div style={{ position: "relative" }}>
-        <CardMedia
-          style={{ width: "175px", position: "absolute", top: "116px", left: "165px", zIndex: 1 }}
-          component="img"
-          image={imageLink}
-        />
-        <CardMedia
-          style={{ width: "400px", position: "absolute", top: "0px", left: "0px" }}
-          component="img"
-          image={cardImage}
-        />
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: "60px",
-            left: "0px",
-          }}
-        >
-          <Typography
-            style={{
-              color: props.textColor,
-              fontFamily: "UltimateTeamCondensed",
-              fontSize: "2rem",
-              fontWeight: 700,
-              position: "absolute",
-              top: "250px",
-            }}
-            component="div"
-            gutterBottom
-          >
-            {firstName} {lastName}
-          </Typography>
-          <Typography
-            style={{
-              color: props.textColor,
-              fontFamily: "UltimateTeamCondensed",
-              fontSize: "2rem",
-              fontWeight: 700,
-              position: "absolute",
-              top: "300px",
-            }}
-            component="div"
-            gutterBottom
-          >
-             {console_price}
-          </Typography>
 
+  if(rareflag === "53"){
+    cardImage = Conmebol;
+  }
+
+  const nationflag = "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";
+
+  let original = "https://static.wefut.com/assets/images/fut23/playeravatars/" + playerId +  ".png";
+  /* let dynamic = "https://static.wefut.com/assets/images/fut23/playeravatars/" + definitionId + ".png";
+  let dynamic_custom = "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" + definitionId + ".png"; */
+
+  return ( 
+    <div class={"card fifa22 gold"}>
+      <div class={"scard"}>
+        <img class={"player-card"} src={cardImage} />
+        <a href="">
+          <img src={badge} class="clubbadge" />
+        </a>
+        <div class={"avatarholder"}>
+            <img class={"dynamic avatar original"} src={original} /> 
+        </div>
+        <a href="">
+            <img src={nationflag} class={"nationflag"} />
+         </a>
+         <div class={"attributes"}>
+        <div class={"middle-border"}></div>
+        <span class={"pace"}>{pac}</span>
+        <span class={"shooting"}>{sho}</span>
+        <span class={"passing"}>{pas}</span>
+        <span class={"dribbling"}>{dri}</span>
+        <span class={"defending"}>{def}</span>
+        <span class={"heading"}>{phy}</span>
+    </div>
+    <div class={"ratingholder"} ><span class={"rating"} >{rating}</span></div>
+    <div class={"positions"}><div class={"main_position"}></div>
+      <div class="alt_positions">
+        <span class="alt_position single"></span>
+      </div>
+    </div>
+    <div class="name darken">
+            <span class="marquee ">{knownAs !== "" ? knownAs : lastName}</span>
+        </div>
+        <div class="name-border"></div>
+        <div class="bottom-border"></div>
+        <div class="position-border"></div>
+        <div class="region-border"></div>
+        <div class="skill-container-wrapper no-promo">
+            <div class="skill-container work">
+                <span class="skillvalue"></span>
+                <span class="skilllabel">WR</span>
+            </div>
+            <div class="skill-container skill">
+            <span class="skillvalue"></span>
+            <img src={Star} class="star" />
+                <span class="skilllabel">SM</span>
+                
+                
+            </div>
+
+            <div class="skill-container weak">
+            <span class="skillvalue"></span>
+            <img src={Star} class="star" />
+                <span class="skilllabel">WF</span>
+
+            </div>
+            <div class="skill-container price-range"></div><div class={"skill-container price"}>{console_price}</div><div class="price-range"></div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 
@@ -230,7 +276,9 @@ class App extends Component {
       tradeable: 0,
       nationsCount: [],
       leaguesCount: [],
-      mostExpensiveTradeablePlayer: ""
+      mostExpensiveTradeablePlayer: "",
+      mostExpensiveUntradeablePlayer: "",
+      mostExpensiveLoanPlayer: "",
     };
 
     axios.post("http://localhost/fut/getOwnedPlayers.php").then((response) => {
@@ -241,17 +289,39 @@ class App extends Component {
       let leaguesCount = [];
       this.setState({ players: players });
       let mostExpensiveTradeablePlayer = "";
+      let mostExpensiveLoanPlayer = "";
+      let mostExpensiveUntradeablePlayer = "";
       players.forEach((player) => {
-        if(mostExpensiveTradeablePlayer === ""){
+        if (mostExpensiveTradeablePlayer === "") {
           mostExpensiveTradeablePlayer = player;
+          mostExpensiveLoanPlayer = player;
+          mostExpensiveUntradeablePlayer = player;
         } else {
-          if(parseInt(player.console_price) > parseInt(mostExpensiveTradeablePlayer.console_price)){
-            if(player.untradeable === "0" && player.loaned === "0"){
-              mostExpensiveTradeablePlayer = player;
-            }
+          let current_price = parseInt(player.console_price);
+          if (
+            player.loaned === "1" &&
+            current_price > parseInt(mostExpensiveLoanPlayer.console_price)
+          ) {
+            mostExpensiveLoanPlayer = player;
+          }
+
+          if (
+            player.untradeable === "1" &&
+            player.loaned === "0" &&
+            current_price >
+              parseInt(mostExpensiveUntradeablePlayer.console_price)
+          ) {
+            mostExpensiveUntradeablePlayer = player;
+          }
+
+          if (
+            player.untradeable === "0" &&
+            current_price > parseInt(mostExpensiveTradeablePlayer.console_price)
+          ) {
+            mostExpensiveTradeablePlayer = player;
           }
         }
-        
+
         if (player.rating < 65) {
           if (player.rareflag == 0) {
             this.setState((prevState) => ({
@@ -316,7 +386,6 @@ class App extends Component {
           // else create new object with league id and count
           leaguesCount[player.leagueId] = 1;
         }
-
       });
 
       // go through each nation and add it to a new array
@@ -343,7 +412,11 @@ class App extends Component {
       leagues.sort((a, b) => b.count - a.count);
       this.setState({ leaguesCount: leagues });
 
-      this.setState({ mostExpensiveTradeablePlayer: mostExpensiveTradeablePlayer });
+      this.setState({
+        mostExpensiveTradeablePlayer: mostExpensiveTradeablePlayer,
+        mostExpensiveUntradeablePlayer: mostExpensiveUntradeablePlayer,
+        mostExpensiveLoanPlayer: mostExpensiveLoanPlayer,
+      });
     });
   }
 
@@ -357,6 +430,8 @@ class App extends Component {
 
     return (
       <ThemeProvider theme={theme}>
+        <div id="top" ></div>
+        <div id="bottom"></div>
         <Box sx={{ width: "100%", textAlign: "center" }}>
           <Typography variant="h1" gutterBottom>
             FUTCoder's
@@ -479,25 +554,33 @@ class App extends Component {
             </Grid>
           </Grid>
 
-          <Box
-  display="flex"
-  justifyContent="center"
-  alignItems="center"
->
-              <Typography variant="h4" gutterBottom>
-                  Most expensive tradeable player
-              </Typography>
-              </Box>
-              <Box
-  display="flex"
-  justifyContent="center"
-  alignItems="center"
->
-                    <PlayerCard
-                      player={this.state.mostExpensiveTradeablePlayer}
-                    />
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="h4" gutterBottom>
+              Most expensive tradeable player
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <PlayerCard player={this.state.mostExpensiveTradeablePlayer} />
+          </Box>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="h4" gutterBottom>
+              Most expensive untradeable player
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <PlayerCard player={this.state.mostExpensiveUntradeablePlayer} />
+          </Box>
+
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="h4" gutterBottom>
+              Most expensive loan player
+            </Typography>
+          </Box>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <PlayerCard player={this.state.mostExpensiveLoanPlayer} />
           </Box>
         </Box>
+
       </ThemeProvider>
     );
   }
