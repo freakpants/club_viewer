@@ -1,4 +1,4 @@
-import {BronzeCommon, GoldRare, GoldCommon, Conmebol, Totw} from "./CardBackgrounds";
+import {BronzeCommon, BronzeRare, SilverCommon, SilverRare, GoldRare, GoldCommon, Conmebol, Totw, Icon} from "./CardBackgrounds";
 import Star from "./assets/star.png";
 const PlayerCard = (props) => {
     const {
@@ -23,22 +23,47 @@ const PlayerCard = (props) => {
     let badge =
       "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
     let cardImage = BronzeCommon;
+    let rarityClass = 'gold';
+
     if (parseInt(rating) > 74) {
-      if (rareflag === 1) {
+      if (rareflag === "1") {
         cardImage = GoldRare;
       } else {
         cardImage = GoldCommon;
       }
+    } else if(parseInt(rating) > 64) {
+      // rarityClass = 'silver';
+      if (rareflag === "1") {
+        cardImage = SilverRare;
+      } else {
+        cardImage = SilverCommon;
+      }
+    } else {
+      // rarityClass = 'bronze';
+      if (rareflag === "1") {
+        cardImage = BronzeRare;
+      } else {
+        cardImage = BronzeCommon;
+      }
     }
-    let rarityClass = 'gold';
+
   
-    if (rareflag === "53") {
-      cardImage = Conmebol;
+    switch(rareflag) {
+      case "53":
+        cardImage = Conmebol;
+        rarityClass = 'conmebol';
+        break;
+      case "3":
+        cardImage = Totw;
+        rarityClass = 'totw';
+        break;
+      case "12":
+        cardImage = Icon;
+        rarityClass = 'icon';
+        break;
     }
-    if(rareflag === "3"){
-      rarityClass = "totw";
-      cardImage = Totw;
-    }
+
+
   
     const nationflag =
       "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";

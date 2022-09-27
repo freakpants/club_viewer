@@ -97,7 +97,7 @@ class App extends Component {
           }
 
           if (player.rating < 65) {
-            if (player.rareflag === 0) {
+            if (player.rareflag === "0") {
               this.setState((prevState) => ({
                 bronzeCommon: prevState.bronzeCommon + 1,
               }));
@@ -110,7 +110,7 @@ class App extends Component {
               bronze: prevState.bronze + 1,
             }));
           } else if (player.rating < 75) {
-            if (player.rareflag === 0) {
+            if (player.rareflag === "0") {
               this.setState((prevState) => ({
                 silverCommon: prevState.silverCommon + 1,
               }));
@@ -123,7 +123,7 @@ class App extends Component {
               silver: prevState.silver + 1,
             }));
           } else {
-            if (player.rareflag === 0) {
+            if (player.rareflag === "0") {
               this.setState((prevState) => ({
                 goldCommon: prevState.goldCommon + 1,
               }));
