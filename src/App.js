@@ -10,6 +10,7 @@ import SilverRare from "./cards/cards_bg_e_1_1_2.png";
 import GoldCommon from "./cards/cards_bg_e_1_0_3.png";
 import GoldRare from "./cards/cards_bg_e_1_1_3.png";
 import Conmebol from "./cards/cards_bg_e_1_53_0.png";
+import Totw from "./cards/cards_bg_e_1_3_3.png";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
@@ -64,6 +65,58 @@ const League = (props) => {
   let imageLink =
     "https://cdn.futbin.com/content/fifa23/img/league/" +
     props.leagueId +
+    ".png";
+  return (
+    <Card
+      elevation={0}
+      style={{
+        width: "70px",
+        height: "110px",
+        background: "#202020",
+        marginBottom: "10px",
+      }}
+    >
+      <div style={{ position: "relative" }}>
+        <CardMedia
+          style={{ width: "70px" }}
+          component="img"
+          image={imageLink}
+        />
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            top: "60px",
+            left: "0px",
+          }}
+        >
+          <Typography
+            style={{
+              color: "white",
+              fontFamily: "UltimateTeamCondensed",
+              fontSize: "2rem",
+              fontWeight: 700,
+            }}
+            variant="h6"
+            component="div"
+            gutterBottom
+          >
+            {props.count}
+          </Typography>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
+const Club = (props) => {
+  let imageLink =
+    "https://cdn.futbin.com/content/fifa23/img/clubs/" +
+    props.teamId +
     ".png";
   return (
     <Card
@@ -170,7 +223,7 @@ const PlayerCard = (props) => {
     sho,
     dri,
     def,
-    preferredPosition
+    preferredPosition,
   } = props.player;
   let imageLink =
     "https://cdn.futbin.com/content/fifa23/img/players/" +
@@ -179,79 +232,101 @@ const PlayerCard = (props) => {
   let badge =
     "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
   let cardImage = BronzeCommon;
-  if (parseInt(rating) > 74 ) {
-    if(rareflag == 1) {
+  if (parseInt(rating) > 74) {
+    if (rareflag == 1) {
       cardImage = GoldRare;
     } else {
       cardImage = GoldCommon;
     }
   }
+  let rarityClass = 'gold';
 
-  if(rareflag === "53"){
+  if (rareflag === "53") {
     cardImage = Conmebol;
   }
+  if(rareflag === "3"){
+    rarityClass = "totw";
+    cardImage = Totw;
+  }
 
-  const nationflag = "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";
+  const nationflag =
+    "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";
 
-  let original = "https://static.wefut.com/assets/images/fut23/playeravatars/" + playerId +  ".png";
+  let original =
+    "https://static.wefut.com/assets/images/fut23/playeravatars/" +
+    playerId +
+    ".png";
   /* let dynamic = "https://static.wefut.com/assets/images/fut23/playeravatars/" + definitionId + ".png";
   let dynamic_custom = "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" + definitionId + ".png"; */
 
-  return ( 
-    <div class={"card fifa22 gold"}>
+  let cardClass = '';
+  cardClass = "card fifa22 " + rarityClass;
+
+  let formatted_console_price = console_price;
+  if(parseInt(console_price) > 999){
+    formatted_console_price = (parseInt(console_price) / 1000).toFixed(0) + "K";
+  }
+  if(parseInt(console_price) > 999999){
+    formatted_console_price = (parseInt(console_price) / 1000000).toFixed(0) + "M";
+  }
+
+  return (
+    <div class={cardClass}>
       <div class={"scard"}>
         <img class={"player-card"} src={cardImage} />
         <a href="">
           <img src={badge} class="clubbadge" />
         </a>
         <div class={"avatarholder"}>
-            <img class={"dynamic avatar original"} src={original} /> 
+          <img class={"dynamic avatar original"} src={original} />
         </div>
         <a href="">
-            <img src={nationflag} class={"nationflag"} />
-         </a>
-         <div class={"attributes"}>
-        <div class={"middle-border"}></div>
-        <span class={"pace"}>{pac}</span>
-        <span class={"shooting"}>{sho}</span>
-        <span class={"passing"}>{pas}</span>
-        <span class={"dribbling"}>{dri}</span>
-        <span class={"defending"}>{def}</span>
-        <span class={"heading"}>{phy}</span>
-    </div>
-    <div class={"ratingholder"} ><span class={"rating"} >{rating}</span></div>
-    <div class={"positions"}><div class={"main_position"}></div>
-      <div class="alt_positions">
-        <span class="alt_position single"></span>
-      </div>
-    </div>
-    <div class="name darken">
-            <span class="marquee ">{knownAs !== "" ? knownAs : lastName}</span>
+          <img src={nationflag} class={"nationflag"} />
+        </a>
+        <div class={"attributes"}>
+          <div class={"middle-border"}></div>
+          <span class={"pace"}>{pac}</span>
+          <span class={"shooting"}>{sho}</span>
+          <span class={"passing"}>{pas}</span>
+          <span class={"dribbling"}>{dri}</span>
+          <span class={"defending"}>{def}</span>
+          <span class={"heading"}>{phy}</span>
+        </div>
+        <div class={"ratingholder"}>
+          <span class={"rating"}>{rating}</span>
+        </div>
+        <div class={"positions"}>
+          <div class={"main_position"}></div>
+          <div class="alt_positions">
+            <span class="alt_position single"></span>
+          </div>
+        </div>
+        <div class="name darken">
+          <span class="marquee ">{knownAs !== "" && knownAs !== "---" ? knownAs : lastName}</span>
         </div>
         <div class="name-border"></div>
         <div class="bottom-border"></div>
         <div class="position-border"></div>
         <div class="region-border"></div>
         <div class="skill-container-wrapper no-promo">
-            <div class="skill-container work">
-                <span class="skillvalue"></span>
-                <span class="skilllabel">WR</span>
-            </div>
-            <div class="skill-container skill">
+          <div class="skill-container work">
+            <span class="skillvalue"></span>
+            <span class="skilllabel">WR</span>
+          </div>
+          <div class="skill-container skill">
             <span class="skillvalue"></span>
             <img src={Star} class="star" />
-                <span class="skilllabel">SM</span>
-                
-                
-            </div>
+            <span class="skilllabel">SM</span>
+          </div>
 
-            <div class="skill-container weak">
+          <div class="skill-container weak">
             <span class="skillvalue"></span>
             <img src={Star} class="star" />
-                <span class="skilllabel">WF</span>
-
-            </div>
-            <div class="skill-container price-range"></div><div class={"skill-container price"}>{console_price}</div><div class="price-range"></div>
+            <span class="skilllabel">WF</span>
+          </div>
+          <div class="skill-container price-range"></div>
+          <div class={"skill-container price"}>{formatted_console_price}</div>
+          <div class="price-range"></div>
         </div>
       </div>
     </div>
@@ -276,6 +351,7 @@ class App extends Component {
       tradeable: 0,
       nationsCount: [],
       leaguesCount: [],
+      clubsCount: [],
       mostExpensiveTradeablePlayer: "",
       mostExpensiveUntradeablePlayer: "",
       mostExpensiveLoanPlayer: "",
@@ -287,6 +363,7 @@ class App extends Component {
       console.log(players);
       let nationsCount = [];
       let leaguesCount = [];
+      let clubsCount = [];
       this.setState({ players: players });
       let mostExpensiveTradeablePlayer = "";
       let mostExpensiveLoanPlayer = "";
@@ -386,6 +463,14 @@ class App extends Component {
           // else create new object with league id and count
           leaguesCount[player.leagueId] = 1;
         }
+
+        // if club id already exists in array, increment count
+        if (clubsCount[player.teamId]) {
+          clubsCount[player.teamId] += 1;
+        } else {
+          // else create new object with club id and count
+          clubsCount[player.teamId] = 1;
+        }
       });
 
       // go through each nation and add it to a new array
@@ -412,6 +497,18 @@ class App extends Component {
       leagues.sort((a, b) => b.count - a.count);
       this.setState({ leaguesCount: leagues });
 
+      // go through each club and add it to a new array
+      let clubs = [];
+      for (let club in clubsCount) {
+        clubs.push({
+          teamId: club,
+          count: clubsCount[club],
+        });
+      }
+      // sort array by count
+      clubs.sort((a, b) => b.count - a.count);
+      this.setState({ clubsCount: clubs });
+
       this.setState({
         mostExpensiveTradeablePlayer: mostExpensiveTradeablePlayer,
         mostExpensiveUntradeablePlayer: mostExpensiveUntradeablePlayer,
@@ -430,13 +527,21 @@ class App extends Component {
 
     return (
       <ThemeProvider theme={theme}>
-        <div id="top" ></div>
+        <div id="top"></div>
         <div id="bottom"></div>
         <Box sx={{ width: "100%", textAlign: "center" }}>
           <Typography variant="h1" gutterBottom>
             FUTCoder's
             <br />
             Club
+          </Typography>
+
+          <Typography variant="h2" gutterBottom>
+            {this.state.players.length} Players
+          </Typography>
+
+          <Typography variant="h2" gutterBottom>
+          {this.state.nationsCount.length} Countries
           </Typography>
 
           <Grid container>
@@ -452,6 +557,10 @@ class App extends Component {
             </Grid>
           </Grid>
 
+          <Typography variant="h2" gutterBottom>
+            {this.state.leaguesCount.length} Leagues
+          </Typography>
+
           <Grid container>
             <Grid item xs={3}></Grid>
             <Grid item xs={6}>
@@ -459,6 +568,23 @@ class App extends Component {
                 {this.state.leaguesCount.map((league) => (
                   <Grid item xs={1}>
                     <League leagueId={league.leagueId} count={league.count} />
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Typography variant="h2" gutterBottom>
+            {this.state.clubsCount.length} Clubs
+          </Typography>
+
+          <Grid container>
+            <Grid item xs={3}></Grid>
+            <Grid item xs={6}>
+              <Grid container>
+                {this.state.clubsCount.map((club) => (
+                  <Grid item xs={1}>
+                    <Club teamId={club.teamId} count={club.count} />
                   </Grid>
                 ))}
               </Grid>
@@ -580,7 +706,6 @@ class App extends Component {
             <PlayerCard player={this.state.mostExpensiveLoanPlayer} />
           </Box>
         </Box>
-
       </ThemeProvider>
     );
   }

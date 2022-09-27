@@ -18,12 +18,20 @@ body{
 }
 
 h1{
+  color: #1d5878 !important;
+}
+
+h2{
   color: #ff4700 !important;
 }
 
 .card.fifa22{
   height: 520px;
     margin-top: 25px;
+}
+
+#bottom, #top{
+  z-index: -1;
 }
 
 #bottom{
