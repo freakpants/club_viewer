@@ -9,10 +9,19 @@ import Club from "./Club";
 import SimpleCard from "./SimpleCard";
 import PlayerCard from "./PlayerCard";
 import Typography from "@mui/material/Typography";
-import { BronzeCommon, BronzeRare, SilverCommon, SilverRare, GoldCommon, GoldRare } from "./CardBackgrounds";
+import {
+  BronzeCommon,
+  BronzeRare,
+  SilverCommon,
+  SilverRare,
+  GoldCommon,
+  GoldRare,
+} from "./CardBackgrounds";
+import { Checkbox } from "@mui/material";
+import { FormGroup} from "@mui/material";
+import { FormControlLabel } from "@mui/material";
 
 class App extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -34,173 +43,194 @@ class App extends Component {
       mostExpensiveTradeablePlayer: "",
       mostExpensiveUntradeablePlayer: "",
       mostExpensiveLoanPlayer: "",
+      singleCountryView: false,
+      singleCountryId: 0,
+      singleCountryPlayers: [],
     };
 
     this.expandNation = this.expandNation.bind(this);
+    this.multiCountryView = this.multiCountryView.bind(this);
 
-
-    axios.post(process.env.REACT_APP_AJAXSERVER + "getOwnedPlayers.php").then((response) => {
-      // manipulate the response here
-      let players = response.data;
-      console.log(players);
-      let nationsCount = [];
-      let leaguesCount = [];
-      let clubsCount = [];
-      this.setState({ players: players });
-      let mostExpensiveTradeablePlayer = "";
-      let mostExpensiveLoanPlayer = "";
-      let mostExpensiveUntradeablePlayer = "";
-      players.forEach((player) => {
-        if (mostExpensiveTradeablePlayer === "") {
-          mostExpensiveTradeablePlayer = player;
-          mostExpensiveLoanPlayer = player;
-          mostExpensiveUntradeablePlayer = player;
-        } else {
-          let current_price = parseInt(player.console_price);
-          if (
-            player.loaned === "1" &&
-            current_price > parseInt(mostExpensiveLoanPlayer.console_price)
-          ) {
-            mostExpensiveLoanPlayer = player;
-          }
-
-          if (
-            player.untradeable === "1" &&
-            player.loaned === "0" &&
-            current_price >
-              parseInt(mostExpensiveUntradeablePlayer.console_price)
-          ) {
-            mostExpensiveUntradeablePlayer = player;
-          }
-
-          if (
-            player.untradeable === "0" &&
-            current_price > parseInt(mostExpensiveTradeablePlayer.console_price)
-          ) {
+    axios
+      .post(process.env.REACT_APP_AJAXSERVER + "getOwnedPlayers.php")
+      .then((response) => {
+        // manipulate the response here
+        let players = response.data;
+        console.log(players);
+        let nationsCount = [];
+        let leaguesCount = [];
+        let clubsCount = [];
+        this.setState({ players: players });
+        let mostExpensiveTradeablePlayer = "";
+        let mostExpensiveLoanPlayer = "";
+        let mostExpensiveUntradeablePlayer = "";
+        players.forEach((player) => {
+          if (mostExpensiveTradeablePlayer === "") {
             mostExpensiveTradeablePlayer = player;
-          }
-        }
+            mostExpensiveLoanPlayer = player;
+            mostExpensiveUntradeablePlayer = player;
+          } else {
+            let current_price = parseInt(player.console_price);
+            if (
+              player.loaned === "1" &&
+              current_price > parseInt(mostExpensiveLoanPlayer.console_price)
+            ) {
+              mostExpensiveLoanPlayer = player;
+            }
 
-        if (player.rating < 65) {
-          if (player.rareflag === 0) {
+            if (
+              player.untradeable === "1" &&
+              player.loaned === "0" &&
+              current_price >
+                parseInt(mostExpensiveUntradeablePlayer.console_price)
+            ) {
+              mostExpensiveUntradeablePlayer = player;
+            }
+
+            if (
+              player.untradeable === "0" &&
+              current_price >
+                parseInt(mostExpensiveTradeablePlayer.console_price)
+            ) {
+              mostExpensiveTradeablePlayer = player;
+            }
+          }
+
+          if (player.rating < 65) {
+            if (player.rareflag === 0) {
+              this.setState((prevState) => ({
+                bronzeCommon: prevState.bronzeCommon + 1,
+              }));
+            } else {
+              this.setState((prevState) => ({
+                bronzeRare: prevState.bronzeRare + 1,
+              }));
+            }
             this.setState((prevState) => ({
-              bronzeCommon: prevState.bronzeCommon + 1,
+              bronze: prevState.bronze + 1,
+            }));
+          } else if (player.rating < 75) {
+            if (player.rareflag === 0) {
+              this.setState((prevState) => ({
+                silverCommon: prevState.silverCommon + 1,
+              }));
+            } else {
+              this.setState((prevState) => ({
+                silverRare: prevState.silverRare + 1,
+              }));
+            }
+            this.setState((prevState) => ({
+              silver: prevState.silver + 1,
+            }));
+          } else {
+            if (player.rareflag === 0) {
+              this.setState((prevState) => ({
+                goldCommon: prevState.goldCommon + 1,
+              }));
+            } else {
+              this.setState((prevState) => ({
+                goldRare: prevState.goldRare + 1,
+              }));
+            }
+            this.setState((prevState) => ({
+              gold: prevState.gold + 1,
+            }));
+          }
+          if (player.untradeable === "1") {
+            this.setState((prevState) => ({
+              untradeable: prevState.untradeable + 1,
             }));
           } else {
             this.setState((prevState) => ({
-              bronzeRare: prevState.bronzeRare + 1,
+              tradeable: prevState.tradeable + 1,
             }));
           }
-          this.setState((prevState) => ({
-            bronze: prevState.bronze + 1,
-          }));
-        } else if (player.rating < 75) {
-          if (player.rareflag === 0) {
-            this.setState((prevState) => ({
-              silverCommon: prevState.silverCommon + 1,
-            }));
+          // if nation id already exists in array, increment count
+          if (nationsCount[player.nationId]) {
+            nationsCount[player.nationId] += 1;
           } else {
-            this.setState((prevState) => ({
-              silverRare: prevState.silverRare + 1,
-            }));
+            // else create new object with nation id and count
+            nationsCount[player.nationId] = 1;
           }
-          this.setState((prevState) => ({
-            silver: prevState.silver + 1,
-          }));
-        } else {
-          if (player.rareflag === 0) {
-            this.setState((prevState) => ({
-              goldCommon: prevState.goldCommon + 1,
-            }));
+
+          // if league id already exists in array, increment count
+          if (leaguesCount[player.leagueId]) {
+            leaguesCount[player.leagueId] += 1;
           } else {
-            this.setState((prevState) => ({
-              goldRare: prevState.goldRare + 1,
-            }));
+            // else create new object with league id and count
+            leaguesCount[player.leagueId] = 1;
           }
-          this.setState((prevState) => ({
-            gold: prevState.gold + 1,
-          }));
-        }
-        if (player.untradeable === "1") {
-          this.setState((prevState) => ({
-            untradeable: prevState.untradeable + 1,
-          }));
-        } else {
-          this.setState((prevState) => ({
-            tradeable: prevState.tradeable + 1,
-          }));
-        }
-        // if nation id already exists in array, increment count
-        if (nationsCount[player.nationId]) {
-          nationsCount[player.nationId] += 1;
-        } else {
-          // else create new object with nation id and count
-          nationsCount[player.nationId] = 1;
-        }
 
-        // if league id already exists in array, increment count
-        if (leaguesCount[player.leagueId]) {
-          leaguesCount[player.leagueId] += 1;
-        } else {
-          // else create new object with league id and count
-          leaguesCount[player.leagueId] = 1;
-        }
+          // if club id already exists in array, increment count
+          if (clubsCount[player.teamId]) {
+            clubsCount[player.teamId] += 1;
+          } else {
+            // else create new object with club id and count
+            clubsCount[player.teamId] = 1;
+          }
+        });
 
-        // if club id already exists in array, increment count
-        if (clubsCount[player.teamId]) {
-          clubsCount[player.teamId] += 1;
-        } else {
-          // else create new object with club id and count
-          clubsCount[player.teamId] = 1;
+        // go through each nation and add it to a new array
+        let nations = [];
+        for (let nation in nationsCount) {
+          nations.push({
+            nationId: nation,
+            count: nationsCount[nation],
+          });
         }
+        // sort array by count
+        nations.sort((a, b) => b.count - a.count);
+        this.setState({ nationsCount: nations });
+
+        // go through each league and add it to a new array
+        let leagues = [];
+        for (let league in leaguesCount) {
+          leagues.push({
+            leagueId: league,
+            count: leaguesCount[league],
+          });
+        }
+        // sort array by count
+        leagues.sort((a, b) => b.count - a.count);
+        this.setState({ leaguesCount: leagues });
+
+        // go through each club and add it to a new array
+        let clubs = [];
+        for (let club in clubsCount) {
+          clubs.push({
+            teamId: club,
+            count: clubsCount[club],
+          });
+        }
+        // sort array by count
+        clubs.sort((a, b) => b.count - a.count);
+        this.setState({ clubsCount: clubs });
+
+        this.setState({
+          mostExpensiveTradeablePlayer: mostExpensiveTradeablePlayer,
+          mostExpensiveUntradeablePlayer: mostExpensiveUntradeablePlayer,
+          mostExpensiveLoanPlayer: mostExpensiveLoanPlayer,
+        });
       });
-
-      // go through each nation and add it to a new array
-      let nations = [];
-      for (let nation in nationsCount) {
-        nations.push({
-          nationId: nation,
-          count: nationsCount[nation],
-        });
-      }
-      // sort array by count
-      nations.sort((a, b) => b.count - a.count);
-      this.setState({ nationsCount: nations });
-
-      // go through each league and add it to a new array
-      let leagues = [];
-      for (let league in leaguesCount) {
-        leagues.push({
-          leagueId: league,
-          count: leaguesCount[league],
-        });
-      }
-      // sort array by count
-      leagues.sort((a, b) => b.count - a.count);
-      this.setState({ leaguesCount: leagues });
-
-      // go through each club and add it to a new array
-      let clubs = [];
-      for (let club in clubsCount) {
-        clubs.push({
-          teamId: club,
-          count: clubsCount[club],
-        });
-      }
-      // sort array by count
-      clubs.sort((a, b) => b.count - a.count);
-      this.setState({ clubsCount: clubs });
-
-      this.setState({
-        mostExpensiveTradeablePlayer: mostExpensiveTradeablePlayer,
-        mostExpensiveUntradeablePlayer: mostExpensiveUntradeablePlayer,
-        mostExpensiveLoanPlayer: mostExpensiveLoanPlayer,
-      });
-    });
   }
 
-  expandNation(){
-    console.log('Click happened');
+  multiCountryView() {
+    this.setState({ singleCountryView: false });
+  }
+
+  expandNation(nationId) {
+    console.log("Click happened");
+    // set singleCountryView in state to true
+    this.setState({ singleCountryView: true, singleCountryId: nationId });
+    // filter players array to only include players from that nation
+    let singleCountryPlayers = this.state.players.filter(
+      (player) => player.nationId === nationId
+    );
+    // order players by rating
+    singleCountryPlayers.sort((a, b) => b.rating - a.rating);
+
+    // set singleCountryPlayers in state to filtered array
+    this.setState({ singleCountryPlayers: singleCountryPlayers });
   }
 
   render() {
@@ -211,10 +241,16 @@ class App extends Component {
       },
     });
 
+            /* 
+          <FormGroup>
+  <FormControlLabel control={<Checkbox />} label="Untradeable" />
+</FormGroup> */
+
     return (
       <ThemeProvider theme={theme}>
         <div id="top"></div>
         <div id="bottom"></div>
+        
         <Box sx={{ width: "100%", textAlign: "center" }}>
           <Typography variant="h1" gutterBottom>
             FUTCoder's
@@ -227,22 +263,48 @@ class App extends Component {
           </Typography>
 
           <Typography variant="h2" gutterBottom>
-          {this.state.nationsCount.length} Countries
+            {this.state.nationsCount.length} Countries
           </Typography>
 
-          <Grid container>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Grid container>
-                {this.state.nationsCount.map((nation) => (
-                  <Grid item xs={1}>
-                    <Nation onClick={this.expandNation} nationId={nation.nationId} count={nation.count} />
-                  </Grid>
-                ))}
+          {!this.state.singleCountryView && (
+            <Grid container>
+              <Grid item xs={3}></Grid>
+              <Grid item xs={6}>
+                <Grid container>
+                  {this.state.nationsCount.map((nation) => (
+                    <Grid item xs={1}>
+                      <Nation
+                        onClick={this.expandNation}
+                        nationId={nation.nationId}
+                        count={nation.count}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          )}
 
+          {this.state.singleCountryView && (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Nation
+                onClick={this.multiCountryView}
+                nationId={this.state.singleCountryId}
+              />
+            </Box>
+          )}
+
+          {this.state.singleCountryView && (
+            <Grid container   direction="row"
+            alignItems="center"
+            justifyContent="center">
+                  {this.state.singleCountryPlayers.map((player) => (
+                    <Grid item xs={1}>
+                      <PlayerCard small={true} player={player} />
+                    </Grid>
+                  ))}
+            </Grid>
+          )}
           <Typography variant="h2" gutterBottom>
             {this.state.leaguesCount.length} Leagues
           </Typography>

@@ -30,8 +30,17 @@ h2{
     margin-top: 25px;
 }
 
+.card.fifa22.small{
+  transform: scale(.4);
+  height: 150px;
+}
+
 #bottom, #top{
   z-index: -1;
+}
+
+.nation{
+  cursor: pointer;
 }
 
 #bottom{
@@ -49,4 +58,36 @@ h2{
   height: 249px;
   background-size:cover;
   position: fixed;
+}
+
+.ut-item-player-status--loan{
+  font-size: 36px;
+  width: 50px;
+  line-height: 50px;
+  z-index: 1;
+  height: 50px;
+  right: 121px;
+  top: 416px;
+  /* display: block; */
+  position: absolute;
+  z-index: 3;
+  text-align: center;
+  font-family: UltimateTeamCondensed;
+  font-weight: 600;
+  box-shadow: 0 1px 1px 0 rgb(0 0 0 / 25%);
+  background: linear-gradient(to bottom,#44a7db 0,#42a2d4 100%);
+  color: #fff;
+  border-radius: 25px;
+}
+
+.untradeable:before{
+  font-family: UltimateTeam-Icons,sans-serif;
+  color: white;
+  right: 201px;
+  top: 0px;
+  position: absolute;
+  width: 1.1em;
+  content: "\E07F";
+  z-index: 2;
+  font-size: 70px;
 }

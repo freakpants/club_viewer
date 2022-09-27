@@ -16,6 +16,9 @@ const PlayerCard = (props) => {
       sho,
       dri,
       def,
+      loaned,
+      contracts,
+      untradeable
     } = props.player;
     let badge =
       "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
@@ -49,6 +52,14 @@ const PlayerCard = (props) => {
   
     let cardClass = '';
     cardClass = "card fifa22 " + rarityClass;
+
+    if(props.small){
+        cardClass += " small";
+    }
+
+    if(untradeable === "1"){
+        cardClass += " untradeable";
+    }
   
     let formatted_console_price = console_price;
     if(parseInt(console_price) > 999){
@@ -96,6 +107,9 @@ const PlayerCard = (props) => {
           <div className="bottom-border"></div>
           <div className="position-border"></div>
           <div className="region-border"></div>
+          {parseInt(loaned) > 0 && (
+            <div class="ut-item-player-status--loan">{contracts}</div>
+          )}
           <div className="skill-container-wrapper no-promo">
             <div className="skill-container work">
               <span className="skillvalue"></span>
@@ -116,6 +130,8 @@ const PlayerCard = (props) => {
             <div className={"skill-container price"}>{formatted_console_price}</div>
             <div className="price-range"></div>
           </div>
+
+          
         </div>
       </div>
     );

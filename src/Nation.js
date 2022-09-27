@@ -13,8 +13,9 @@ class Nation extends Component {
         "https://cdn.futbin.com/content/fifa23/img/nation/" +
         this.props.nationId +
         ".png";
+        
     return (
-      <Card onClick={this.handleClick} elevation={0} style={{ width: "70px", height: "90px" }}>
+      <Card className={"nation"} onClick={this.handleClick} elevation={0} style={{ width: "70px", height: "90px" }}>
         <div style={{ position: "relative" }}>
           <CardMedia
             style={{ width: "70px" }}
