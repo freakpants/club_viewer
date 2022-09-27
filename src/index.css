@@ -46,18 +46,19 @@ h2{
 #bottom{
   background: url("assets/bottom.png");
   background-size: cover;
-  width: 1920px;
-  height: 307px;
+  width: 100vw;
+  height: 16vw;
   bottom: 0px;
+  aspect-ratio: 6380/1149;
   position: fixed;
 }
 
 #top{
   background: url("assets/top.png");
-  width: 1920px;
-  height: 249px;
+  width: 100vw;
   background-size:cover;
   position: fixed;
+  aspect-ratio: 6380/1022;
 }
 
 .ut-item-player-status--loan{
@@ -78,6 +79,23 @@ h2{
   background: linear-gradient(to bottom,#44a7db 0,#42a2d4 100%);
   color: #fff;
   border-radius: 25px;
+}
+
+#root{
+  position: absolute;
+  overflow-y: scroll;
+  top: 0px;
+  bottom: 120px;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+#root::-webkit-scrollbar {
+  display: none;
+}
+
+
+body{
+  margin-bottom: 20px;
 }
 
 .untradeable:before{
