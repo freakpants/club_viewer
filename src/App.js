@@ -1,339 +1,18 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
-import BronzeCommon from "./cards/cards_bg_e_1_0_1.png";
-import BronzeRare from "./cards/cards_bg_e_1_1_1.png";
-import SilverCommon from "./cards/cards_bg_e_1_0_2.png";
-import SilverRare from "./cards/cards_bg_e_1_1_2.png";
-import GoldCommon from "./cards/cards_bg_e_1_0_3.png";
-import GoldRare from "./cards/cards_bg_e_1_1_3.png";
-import Conmebol from "./cards/cards_bg_e_1_53_0.png";
-import Totw from "./cards/cards_bg_e_1_3_3.png";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
 import Grid from "@mui/material/Grid";
-import Star from "./assets/star.png";
-
-/* https://cdn.futbin.com/content/fifa23/img/nation/38.png */
-const Nation = (props) => {
-  let imageLink =
-    "https://cdn.futbin.com/content/fifa23/img/nation/" +
-    props.nationId +
-    ".png";
-  return (
-    <Card elevation={0} style={{ width: "70px", height: "90px" }}>
-      <div style={{ position: "relative" }}>
-        <CardMedia
-          style={{ width: "70px" }}
-          component="img"
-          image={imageLink}
-        />
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: "50px",
-            left: "0px",
-          }}
-        >
-          <Typography
-            style={{
-              color: "black",
-              fontFamily: "UltimateTeamCondensed",
-              fontSize: "2rem",
-              fontWeight: 700,
-            }}
-            variant="h6"
-            component="div"
-            gutterBottom
-          >
-            {props.count}
-          </Typography>
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-const League = (props) => {
-  let imageLink =
-    "https://cdn.futbin.com/content/fifa23/img/league/" +
-    props.leagueId +
-    ".png";
-  return (
-    <Card
-      elevation={0}
-      style={{
-        width: "70px",
-        height: "110px",
-        background: "#202020",
-        marginBottom: "10px",
-      }}
-    >
-      <div style={{ position: "relative" }}>
-        <CardMedia
-          style={{ width: "70px" }}
-          component="img"
-          image={imageLink}
-        />
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: "60px",
-            left: "0px",
-          }}
-        >
-          <Typography
-            style={{
-              color: "white",
-              fontFamily: "UltimateTeamCondensed",
-              fontSize: "2rem",
-              fontWeight: 700,
-            }}
-            variant="h6"
-            component="div"
-            gutterBottom
-          >
-            {props.count}
-          </Typography>
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-const Club = (props) => {
-  let imageLink =
-    "https://cdn.futbin.com/content/fifa23/img/clubs/" +
-    props.teamId +
-    ".png";
-  return (
-    <Card
-      elevation={0}
-      style={{
-        width: "70px",
-        height: "110px",
-        background: "#202020",
-        marginBottom: "10px",
-      }}
-    >
-      <div style={{ position: "relative" }}>
-        <CardMedia
-          style={{ width: "70px" }}
-          component="img"
-          image={imageLink}
-        />
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: "60px",
-            left: "0px",
-          }}
-        >
-          <Typography
-            style={{
-              color: "white",
-              fontFamily: "UltimateTeamCondensed",
-              fontSize: "2rem",
-              fontWeight: 700,
-            }}
-            variant="h6"
-            component="div"
-            gutterBottom
-          >
-            {props.count}
-          </Typography>
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-const SimpleCard = (props) => {
-  return (
-    <Card elevation={0} style={{ width: "175px" }}>
-      <div style={{ position: "relative" }}>
-        <CardMedia
-          style={{ width: "175px" }}
-          component="img"
-          image={props.cardType}
-        />
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            position: "absolute",
-            top: "60px",
-            left: "0px",
-          }}
-        >
-          <Typography
-            style={{
-              color: props.textColor,
-              fontFamily: "UltimateTeamCondensed",
-              fontSize: "4rem",
-              fontWeight: 700,
-            }}
-            variant="h6"
-            component="div"
-            gutterBottom
-          >
-            {props.cardAmount}
-          </Typography>
-        </div>
-      </div>
-    </Card>
-  );
-};
-
-const PlayerCard = (props) => {
-  const {
-    definitionId,
-    firstName,
-    lastName,
-    knownAs,
-    console_price,
-    rating,
-    rareflag,
-    teamId,
-    playerId,
-    nationId,
-    pac,
-    pas,
-    phy,
-    sho,
-    dri,
-    def,
-    preferredPosition,
-  } = props.player;
-  let imageLink =
-    "https://cdn.futbin.com/content/fifa23/img/players/" +
-    definitionId +
-    ".png";
-  let badge =
-    "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
-  let cardImage = BronzeCommon;
-  if (parseInt(rating) > 74) {
-    if (rareflag == 1) {
-      cardImage = GoldRare;
-    } else {
-      cardImage = GoldCommon;
-    }
-  }
-  let rarityClass = 'gold';
-
-  if (rareflag === "53") {
-    cardImage = Conmebol;
-  }
-  if(rareflag === "3"){
-    rarityClass = "totw";
-    cardImage = Totw;
-  }
-
-  const nationflag =
-    "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";
-
-  let original =
-    "https://static.wefut.com/assets/images/fut23/playeravatars/" +
-    playerId +
-    ".png";
-  /* let dynamic = "https://static.wefut.com/assets/images/fut23/playeravatars/" + definitionId + ".png";
-  let dynamic_custom = "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" + definitionId + ".png"; */
-
-  let cardClass = '';
-  cardClass = "card fifa22 " + rarityClass;
-
-  let formatted_console_price = console_price;
-  if(parseInt(console_price) > 999){
-    formatted_console_price = (parseInt(console_price) / 1000).toFixed(0) + "K";
-  }
-  if(parseInt(console_price) > 999999){
-    formatted_console_price = (parseInt(console_price) / 1000000).toFixed(0) + "M";
-  }
-
-  return (
-    <div class={cardClass}>
-      <div class={"scard"}>
-        <img class={"player-card"} src={cardImage} />
-        <a href="">
-          <img src={badge} class="clubbadge" />
-        </a>
-        <div class={"avatarholder"}>
-          <img class={"dynamic avatar original"} src={original} />
-        </div>
-        <a href="">
-          <img src={nationflag} class={"nationflag"} />
-        </a>
-        <div class={"attributes"}>
-          <div class={"middle-border"}></div>
-          <span class={"pace"}>{pac}</span>
-          <span class={"shooting"}>{sho}</span>
-          <span class={"passing"}>{pas}</span>
-          <span class={"dribbling"}>{dri}</span>
-          <span class={"defending"}>{def}</span>
-          <span class={"heading"}>{phy}</span>
-        </div>
-        <div class={"ratingholder"}>
-          <span class={"rating"}>{rating}</span>
-        </div>
-        <div class={"positions"}>
-          <div class={"main_position"}></div>
-          <div class="alt_positions">
-            <span class="alt_position single"></span>
-          </div>
-        </div>
-        <div class="name darken">
-          <span class="marquee ">{knownAs !== "" && knownAs !== "---" ? knownAs : lastName}</span>
-        </div>
-        <div class="name-border"></div>
-        <div class="bottom-border"></div>
-        <div class="position-border"></div>
-        <div class="region-border"></div>
-        <div class="skill-container-wrapper no-promo">
-          <div class="skill-container work">
-            <span class="skillvalue"></span>
-            <span class="skilllabel">WR</span>
-          </div>
-          <div class="skill-container skill">
-            <span class="skillvalue"></span>
-            <img src={Star} class="star" />
-            <span class="skilllabel">SM</span>
-          </div>
-
-          <div class="skill-container weak">
-            <span class="skillvalue"></span>
-            <img src={Star} class="star" />
-            <span class="skilllabel">WF</span>
-          </div>
-          <div class="skill-container price-range"></div>
-          <div class={"skill-container price"}>{formatted_console_price}</div>
-          <div class="price-range"></div>
-        </div>
-      </div>
-    </div>
-  );
-};
+import Nation from "./Nation";
+import League from "./League";
+import Club from "./Club";
+import SimpleCard from "./SimpleCard";
+import PlayerCard from "./PlayerCard";
+import Typography from "@mui/material/Typography";
+import { BronzeCommon, BronzeRare, SilverCommon, SilverRare, GoldCommon, GoldRare } from "./CardBackgrounds";
 
 class App extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -357,7 +36,10 @@ class App extends Component {
       mostExpensiveLoanPlayer: "",
     };
 
-    axios.post("http://localhost/fut/getOwnedPlayers.php").then((response) => {
+    this.expandNation = this.expandNation.bind(this);
+
+
+    axios.post(process.env.REACT_APP_AJAXSERVER + "getOwnedPlayers.php").then((response) => {
       // manipulate the response here
       let players = response.data;
       console.log(players);
@@ -400,7 +82,7 @@ class App extends Component {
         }
 
         if (player.rating < 65) {
-          if (player.rareflag == 0) {
+          if (player.rareflag === 0) {
             this.setState((prevState) => ({
               bronzeCommon: prevState.bronzeCommon + 1,
             }));
@@ -413,7 +95,7 @@ class App extends Component {
             bronze: prevState.bronze + 1,
           }));
         } else if (player.rating < 75) {
-          if (player.rareflag == 0) {
+          if (player.rareflag === 0) {
             this.setState((prevState) => ({
               silverCommon: prevState.silverCommon + 1,
             }));
@@ -426,7 +108,7 @@ class App extends Component {
             silver: prevState.silver + 1,
           }));
         } else {
-          if (player.rareflag == 0) {
+          if (player.rareflag === 0) {
             this.setState((prevState) => ({
               goldCommon: prevState.goldCommon + 1,
             }));
@@ -517,6 +199,10 @@ class App extends Component {
     });
   }
 
+  expandNation(){
+    console.log('Click happened');
+  }
+
   render() {
     const theme = createTheme({
       typography: {
@@ -550,7 +236,7 @@ class App extends Component {
               <Grid container>
                 {this.state.nationsCount.map((nation) => (
                   <Grid item xs={1}>
-                    <Nation nationId={nation.nationId} count={nation.count} />
+                    <Nation onClick={this.expandNation} nationId={nation.nationId} count={nation.count} />
                   </Grid>
                 ))}
               </Grid>
