@@ -17,9 +17,7 @@ import {
   GoldCommon,
   GoldRare,
 } from "./CardBackgrounds";
-import { Checkbox } from "@mui/material";
-import { FormGroup} from "@mui/material";
-import { FormControlLabel } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 class App extends Component {
   constructor(props) {
@@ -46,17 +44,50 @@ class App extends Component {
       singleCountryView: false,
       singleCountryId: 0,
       singleCountryPlayers: [],
+      users: [],
+      selectedUserId: 0,
+      selectedUserName: "",
+      tradeablePlayersByValue: [],
     };
 
     this.expandNation = this.expandNation.bind(this);
     this.multiCountryView = this.multiCountryView.bind(this);
+    this.handleUserChange = this.handleUserChange.bind(this);
+    this.getPlayersForUser = this.getPlayersForUser.bind(this);
 
+    // get list of users
     axios
-      .post(process.env.REACT_APP_AJAXSERVER + "getOwnedPlayers.php")
+      .get(process.env.REACT_APP_AJAXSERVER + "getUsers.php")
+      .then((response) => {
+        this.setState({ users: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  }
+
+  handleUserChange(event){
+    // console.log("setting user to: ");
+    // console.log(event.target.value);
+    this.setState({selectedUserId: event.target.value}, () => {
+      // set the username base on the id
+      let selectedUserName = this.state.users.filter((user) => user.id === this.state.selectedUserId)[0].name;
+      this.setState({selectedUserName: selectedUserName});
+      this.getPlayersForUser();
+    }  
+    );
+
+  }
+
+  getPlayersForUser(){
+    // console.log("getting players for user: " + this.state.selectedUserId);
+    axios
+      .post(process.env.REACT_APP_AJAXSERVER + "getOwnedPlayers.php" + "?user_id=" + this.state.selectedUserId)
       .then((response) => {
         // manipulate the response here
         let players = response.data;
-        console.log(players);
+        // console.log(players);
         let nationsCount = [];
         let leaguesCount = [];
         let clubsCount = [];
@@ -65,10 +96,17 @@ class App extends Component {
         let mostExpensiveLoanPlayer = "";
         let mostExpensiveUntradeablePlayer = "";
         players.forEach((player) => {
+          // console.log(player);
           if (mostExpensiveTradeablePlayer === "") {
-            mostExpensiveTradeablePlayer = player;
-            mostExpensiveLoanPlayer = player;
-            mostExpensiveUntradeablePlayer = player;
+            // setting fake 0 coins player
+            const fakePlayer = {
+              name: "Fake",
+              console_price: 0,
+            };
+
+            mostExpensiveTradeablePlayer = fakePlayer;
+            mostExpensiveLoanPlayer = fakePlayer;
+            mostExpensiveUntradeablePlayer = fakePlayer;
           } else {
             let current_price = parseInt(player.console_price);
             if (
@@ -206,6 +244,11 @@ class App extends Component {
         clubs.sort((a, b) => b.count - a.count);
         this.setState({ clubsCount: clubs });
 
+
+        console.log(players);
+
+        this.setState({ tradeablePlayersByValue: players });
+
         this.setState({
           mostExpensiveTradeablePlayer: mostExpensiveTradeablePlayer,
           mostExpensiveUntradeablePlayer: mostExpensiveUntradeablePlayer,
@@ -219,7 +262,7 @@ class App extends Component {
   }
 
   expandNation(nationId) {
-    console.log("Click happened");
+    // console.log("Click happened");
     // set singleCountryView in state to true
     this.setState({ singleCountryView: true, singleCountryId: nationId });
     // filter players array to only include players from that nation
@@ -246,14 +289,40 @@ class App extends Component {
   <FormControlLabel control={<Checkbox />} label="Untradeable" />
 </FormGroup> */
 
+    let tradeablePlayersByValue = this.state.players.filter(
+      (player) => player.untradeable === "0"
+    );
+    tradeablePlayersByValue.sort((a, b) => b.console_price - a.console_price);
+
     return (
       <ThemeProvider theme={theme}>
         <div id="top"></div>
         <div id="bottom"></div>
-        
+
+        {this.state.users.length > 0 && (
+          <Box sx={{ width: "100vw", textAlign: "center" }}>
+            <FormControl variant="outlined" style={{ zIndex: 2, width: "300px", marginTop:"20px" }}>
+            <InputLabel id="user-select-label">User</InputLabel>
+            <Select
+              labelId="user-select-label"
+              id="user-select"
+              value={this.state.selectedUser}
+              onChange={this.handleUserChange}
+              label="Club"
+            >
+              {this.state.users.map((user) => (
+                <MenuItem value={user.id}>{user.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          </Box>
+        )}
+
+
+        {this.state.selectedUserId !== 0 && (
         <Box sx={{ width: "100%", textAlign: "center" }}>
           <Typography variant="h1" gutterBottom>
-            FUTCoder's
+            {this.state.selectedUserName}'s
             <br />
             Club
           </Typography>
@@ -430,11 +499,27 @@ class App extends Component {
 
           <Box display="flex" justifyContent="center" alignItems="center">
             <Typography variant="h4" gutterBottom>
-              Most expensive tradeable player
+              Tradeable players by value
             </Typography>
+            <Grid container   direction="row"
+            alignItems="center"
+            justifyContent="center">
+
+            </Grid>
           </Box>
+
+          <Grid container   direction="row"
+            alignItems="center"
+            justifyContent="center">
+                  {tradeablePlayersByValue.map((player) => (
+                    <Grid item xs={2}>
+                      <PlayerCard player={player} />
+                    </Grid>
+                  ))}
+          </Grid>
+
+
           <Box display="flex" justifyContent="center" alignItems="center">
-            <PlayerCard player={this.state.mostExpensiveTradeablePlayer} />
           </Box>
           <Box display="flex" justifyContent="center" alignItems="center">
             <Typography variant="h4" gutterBottom>
@@ -453,7 +538,8 @@ class App extends Component {
           <Box display="flex" justifyContent="center" alignItems="center">
             <PlayerCard player={this.state.mostExpensiveLoanPlayer} />
           </Box>
-        </Box>
+        </Box>)
+  }
       </ThemeProvider>
     );
   }
