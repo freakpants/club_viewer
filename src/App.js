@@ -49,12 +49,30 @@ class App extends Component {
       selectedUserId: 0,
       selectedUserName: "",
       tradeablePlayersByValue: [],
+      countryListExpanded: false,
+      leagueListExpanded: false,
+      clubListExpanded: false,
     };
 
     this.expandNation = this.expandNation.bind(this);
     this.multiCountryView = this.multiCountryView.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.getPlayersForUser = this.getPlayersForUser.bind(this);
+    this.toggleCountryList = this.toggleCountryList.bind(this);
+    this.toggleLeagueList = this.toggleLeagueList.bind(this);
+    this.toggleClubList = this.toggleClubList.bind(this);
+  }
+
+  toggleClubList() {
+    this.setState({ clubListExpanded: !this.state.clubListExpanded });
+  }
+
+  toggleLeagueList() {
+    this.setState({ leagueListExpanded: !this.state.leagueListExpanded });
+  }
+
+  toggleCountryList() {
+    this.setState({ countryListExpanded: !this.state.countryListExpanded });
   }
 
   handleUserChange(event) {
@@ -264,13 +282,13 @@ class App extends Component {
   }
 
   multiCountryView() {
-    this.setState({ singleCountryView: false });
+    this.setState({ singleCountryView: false, countryListExpanded: true });
   }
 
   expandNation(nationId) {
     // console.log("Click happened");
     // set singleCountryView in state to true
-    this.setState({ singleCountryView: true, singleCountryId: nationId });
+    this.setState({ singleCountryView: true, singleCountryId: nationId, countryListExpanded: false });
     // filter players array to only include players from that nation
     let singleCountryPlayers = this.state.players.filter(
       (player) => player.nationId === nationId
@@ -350,11 +368,11 @@ class App extends Component {
               {this.state.players.length} Players
             </Typography>
 
-            <Typography variant="h2" gutterBottom>
+            <Typography variant="h2" gutterBottom onClick={this.toggleCountryList}>
               {this.state.nationsCount.length} Countries
             </Typography>
 
-            {!this.state.singleCountryView && (
+            {this.state.countryListExpanded && (
               <Grid container>
                 <Grid item xs={3}></Grid>
                 <Grid item xs={6}>
@@ -396,10 +414,11 @@ class App extends Component {
                 ))}
               </Grid>
             )}
-            <Typography variant="h2" gutterBottom>
+            <Typography variant="h2" gutterBottom onClick={this.toggleLeagueList}>
               {this.state.leaguesCount.length} Leagues
             </Typography>
 
+            {this.state.leagueListExpanded && (
             <Grid container>
               <Grid item xs={3}></Grid>
               <Grid item xs={6}>
@@ -412,11 +431,13 @@ class App extends Component {
                 </Grid>
               </Grid>
             </Grid>
+            )}
 
-            <Typography variant="h2" gutterBottom>
+            <Typography variant="h2" gutterBottom onClick={this.toggleClubList}>
               {this.state.clubsCount.length} Clubs
             </Typography>
 
+            {this.state.clubListExpanded && (
             <Grid container>
               <Grid item xs={3}></Grid>
               <Grid item xs={6}>
@@ -429,6 +450,7 @@ class App extends Component {
                 </Grid>
               </Grid>
             </Grid>
+            )}
 
             <Grid container>
               <Grid item xs={3}></Grid>
