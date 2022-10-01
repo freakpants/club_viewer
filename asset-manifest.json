@@ -1,13 +1,11 @@
 {
   "files": {
-    "main.css": "/club_viewer/static/css/main.c68c44e5.css",
-    "main.js": "/club_viewer/static/js/main.5b722a75.js",
+    "main.css": "/club_viewer/static/css/main.04db0dcc.css",
+    "main.js": "/club_viewer/static/js/main.942df526.js",
     "static/js/787.868423e9.chunk.js": "/club_viewer/static/js/787.868423e9.chunk.js",
-    "static/media/coderbg.jpg": "/club_viewer/static/media/coderbg.b9b2cb3c5b1fbb0043ef.jpg",
-    "static/media/totw-insta.png": "/club_viewer/static/media/totw-insta.52d69c9d9cc693fed1a5.png",
+    "static/media/cards_bg_e_1_21_0.png": "/club_viewer/static/media/cards_bg_e_1_21_0.ebc0d41c65c6b25b034b.png",
     "static/media/MATROSKA.ttf.svg": "/club_viewer/static/media/MATROSKA.ttf.36d972b523b1d230880a.svg",
     "static/media/bottom.png": "/club_viewer/static/media/bottom.b639689d8a578a0cf1d8.png",
-    "static/media/coder_prem.jpg": "/club_viewer/static/media/coder_prem.aaaa978668bf1a14c09e.jpg",
     "static/media/cards_bg_e_1_72_0.png": "/club_viewer/static/media/cards_bg_e_1_72_0.501f5d6068205353cad1.png",
     "static/media/cards_bg_e_1_12_0.png": "/club_viewer/static/media/cards_bg_e_1_12_0.deae06a0baf62bd15f08.png",
     "static/media/cards_bg_e_1_0_3.png": "/club_viewer/static/media/cards_bg_e_1_0_3.3942b9585b90f3a3af8c.png",
@@ -16,23 +14,21 @@
     "static/media/cards_bg_e_1_1_2.png": "/club_viewer/static/media/cards_bg_e_1_1_2.232a890077ef28c4a107.png",
     "static/media/cards_bg_e_1_1_3.png": "/club_viewer/static/media/cards_bg_e_1_1_3.dd866df2a5498ecdddd5.png",
     "static/media/cards_bg_e_1_0_2.png": "/club_viewer/static/media/cards_bg_e_1_0_2.9aadfa1bbd5f73e8eb7a.png",
+    "static/media/cards_bg_e_1_52_0.png": "/club_viewer/static/media/cards_bg_e_1_52_0.d8f753ba4159a63f4bf2.png",
     "static/media/top.png": "/club_viewer/static/media/top.c719ea9055686914b441.png",
     "static/media/cards_bg_e_1_3_3.png": "/club_viewer/static/media/cards_bg_e_1_3_3.3e11b2b7abe6cf2ad81d.png",
-    "static/media/bg-totw.jpg": "/club_viewer/static/media/bg-totw.7c435dbde4de4a76b061.jpg",
     "static/media/MATROSKA.ttf.eot": "/club_viewer/static/media/MATROSKA.ttf.1facc6e0a79a0ea22059.eot",
-    "static/media/insta_prem.png": "/club_viewer/static/media/insta_prem.548c83f5b700caf9bdc2.png",
     "static/media/cards_bg_e_1_53_0.png": "/club_viewer/static/media/cards_bg_e_1_53_0.cf5b0c705b1b7e6e19a4.png",
     "static/media/MATROSKA.ttf.woff": "/club_viewer/static/media/MATROSKA.ttf.c4d124f2a20b28b05975.woff",
-    "static/media/coderbg-insta.png": "/club_viewer/static/media/coderbg-insta.38dadcdfa7ace5d20429.png",
     "static/media/UltimateTeamCondensed.woff": "/club_viewer/static/media/UltimateTeamCondensed.faca749167dc9d71ff77.woff",
     "static/media/UltimateTeam-Icons.woff": "/club_viewer/static/media/UltimateTeam-Icons.4ce90d80cd304b60c8f0.woff",
     "index.html": "/club_viewer/index.html",
-    "main.c68c44e5.css.map": "/club_viewer/static/css/main.c68c44e5.css.map",
-    "main.5b722a75.js.map": "/club_viewer/static/js/main.5b722a75.js.map",
+    "main.04db0dcc.css.map": "/club_viewer/static/css/main.04db0dcc.css.map",
+    "main.942df526.js.map": "/club_viewer/static/js/main.942df526.js.map",
     "787.868423e9.chunk.js.map": "/club_viewer/static/js/787.868423e9.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c68c44e5.css",
-    "static/js/main.5b722a75.js"
+    "static/css/main.04db0dcc.css",
+    "static/js/main.942df526.js"
   ]
 }
