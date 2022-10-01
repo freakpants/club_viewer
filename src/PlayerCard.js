@@ -1,5 +1,6 @@
-import {BronzeCommon, BronzeRare, SilverCommon, SilverRare, GoldRare, GoldCommon, Conmebol, Totw, Icon} from "./CardBackgrounds";
+import {BronzeCommon, BronzeRare, SilverCommon, SilverRare, GoldRare, GoldCommon, Libs, Totw, Icon, Hero, OTW, Suds} from "./CardBackgrounds";
 import Star from "./assets/star.png";
+import { ListItemButton } from "@mui/material";
 const PlayerCard = (props) => {
     const {
       lastName,
@@ -49,9 +50,13 @@ const PlayerCard = (props) => {
 
   
     switch(rareflag) {
+      case "52":
+        cardImage = Suds;
+        rarityClass = 'suds';
+        break;
       case "53":
-        cardImage = Conmebol;
-        rarityClass = 'conmebol';
+        cardImage = Libs;
+        rarityClass = 'libs';
         break;
       case "3":
         cardImage = Totw;
@@ -60,6 +65,14 @@ const PlayerCard = (props) => {
       case "12":
         cardImage = Icon;
         rarityClass = 'icon';
+        break;
+      case "21":
+        cardImage = OTW;
+        rarityClass = 'otw';
+        break;
+      case "72":
+        cardImage = Hero;
+        rarityClass = 'heroes';
         break;
     }
 
@@ -135,7 +148,7 @@ const PlayerCard = (props) => {
           {parseInt(loaned) > 0 && (
             <div class="ut-item-player-status--loan">{contracts}</div>
           )}
-          <div className="skill-container-wrapper no-promo">
+          <div className="skill-container-wrapper no-promo prices">
             <div className="skill-container work">
               <span className="skillvalue"></span>
               <span className="skilllabel">WR</span>

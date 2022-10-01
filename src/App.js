@@ -294,6 +294,11 @@ class App extends Component {
     );
     tradeablePlayersByValue.sort((a, b) => b.console_price - a.console_price);
 
+    let untradeablePlayersByValue = this.state.players.filter(
+      (player) => player.untradeable === "1" && player.loaned === "0"
+    );
+    untradeablePlayersByValue.sort((a, b) => b.console_price - a.console_price);
+
     return (
       <ThemeProvider theme={theme}>
         <div id="top"></div>
@@ -501,11 +506,6 @@ class App extends Component {
             <Typography variant="h4" gutterBottom>
               Tradeable players by value
             </Typography>
-            <Grid container   direction="row"
-            alignItems="center"
-            justifyContent="center">
-
-            </Grid>
           </Box>
 
           <Grid container   direction="row"
@@ -523,12 +523,19 @@ class App extends Component {
           </Box>
           <Box display="flex" justifyContent="center" alignItems="center">
             <Typography variant="h4" gutterBottom>
-              Most expensive untradeable player
+              Untradeable players by value
             </Typography>
           </Box>
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <PlayerCard player={this.state.mostExpensiveUntradeablePlayer} />
-          </Box>
+
+          <Grid container   direction="row"
+            alignItems="center"
+            justifyContent="center">
+                  {untradeablePlayersByValue.map((player) => (
+                    <Grid item xs={2}>
+                      <PlayerCard player={player} />
+                    </Grid>
+                  ))}
+          </Grid>
 
           <Box display="flex" justifyContent="center" alignItems="center">
             <Typography variant="h4" gutterBottom>
