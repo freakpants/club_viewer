@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/club_viewer/static/css/main.9bdba565.css",
-    "main.js": "/club_viewer/static/js/main.f90d8df8.js",
+    "main.css": "/club_viewer/static/css/main.7e44ec93.css",
+    "main.js": "/club_viewer/static/js/main.ebe0ad36.js",
     "static/js/787.868423e9.chunk.js": "/club_viewer/static/js/787.868423e9.chunk.js",
     "static/media/cards_bg_e_1_21_0.png": "/club_viewer/static/media/cards_bg_e_1_21_0.ebc0d41c65c6b25b034b.png",
     "static/media/MATROSKA.ttf.svg": "/club_viewer/static/media/MATROSKA.ttf.36d972b523b1d230880a.svg",
@@ -23,12 +23,12 @@
     "static/media/UltimateTeamCondensed.woff": "/club_viewer/static/media/UltimateTeamCondensed.faca749167dc9d71ff77.woff",
     "static/media/UltimateTeam-Icons.woff": "/club_viewer/static/media/UltimateTeam-Icons.4ce90d80cd304b60c8f0.woff",
     "index.html": "/club_viewer/index.html",
-    "main.9bdba565.css.map": "/club_viewer/static/css/main.9bdba565.css.map",
-    "main.f90d8df8.js.map": "/club_viewer/static/js/main.f90d8df8.js.map",
+    "main.7e44ec93.css.map": "/club_viewer/static/css/main.7e44ec93.css.map",
+    "main.ebe0ad36.js.map": "/club_viewer/static/js/main.ebe0ad36.js.map",
     "787.868423e9.chunk.js.map": "/club_viewer/static/js/787.868423e9.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9bdba565.css",
-    "static/js/main.f90d8df8.js"
+    "static/css/main.7e44ec93.css",
+    "static/js/main.ebe0ad36.js"
   ]
 }
