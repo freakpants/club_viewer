@@ -9,6 +9,7 @@ import Club from "./Club";
 import SimpleCard from "./SimpleCard";
 import PlayerCard from "./PlayerCard";
 import Typography from "@mui/material/Typography";
+import $ from "jquery";
 import {
   BronzeCommon,
   BronzeRare,
@@ -64,26 +65,33 @@ class App extends Component {
       .catch((error) => {
         console.log(error);
       });
-
   }
 
-  handleUserChange(event){
+  handleUserChange(event) {
     // console.log("setting user to: ");
     // console.log(event.target.value);
-    this.setState({selectedUserId: event.target.value}, () => {
+    this.setState({ selectedUserId: event.target.value }, () => {
       // set the username base on the id
-      let selectedUserName = this.state.users.filter((user) => user.id === this.state.selectedUserId)[0].name;
-      this.setState({selectedUserName: selectedUserName});
+      let selectedUserName = this.state.users.filter(
+        (user) => user.id === this.state.selectedUserId
+      )[0].name;
+      this.setState({ selectedUserName: selectedUserName });
       this.getPlayersForUser();
-    }  
-    );
-
+    });
   }
 
-  getPlayersForUser(){
+  componentDidUpdate() {
+  }
+
+  getPlayersForUser() {
     // console.log("getting players for user: " + this.state.selectedUserId);
     axios
-      .post(process.env.REACT_APP_AJAXSERVER + "getOwnedPlayers.php" + "?user_id=" + this.state.selectedUserId)
+      .post(
+        process.env.REACT_APP_AJAXSERVER +
+          "getOwnedPlayers.php" +
+          "?user_id=" +
+          this.state.selectedUserId
+      )
       .then((response) => {
         // manipulate the response here
         let players = response.data;
@@ -244,7 +252,6 @@ class App extends Component {
         clubs.sort((a, b) => b.count - a.count);
         this.setState({ clubsCount: clubs });
 
-
         console.log(players);
 
         this.setState({ tradeablePlayersByValue: players });
@@ -284,7 +291,7 @@ class App extends Component {
       },
     });
 
-            /* 
+    /* 
           <FormGroup>
   <FormControlLabel control={<Checkbox />} label="Untradeable" />
 </FormGroup> */
@@ -306,247 +313,260 @@ class App extends Component {
 
         {this.state.users.length > 0 && (
           <Box sx={{ width: "100vw", textAlign: "center" }}>
-            <FormControl variant="outlined" style={{ zIndex: 2, width: "300px", marginTop:"20px" }}>
-            <InputLabel id="user-select-label">User</InputLabel>
-            <Select
-              labelId="user-select-label"
-              id="user-select"
-              value={this.state.selectedUser}
-              onChange={this.handleUserChange}
-              label="Club"
+            <FormControl
+              variant="outlined"
+              style={{ zIndex: 2, width: "300px", marginTop: "20px" }}
             >
-              {this.state.users.map((user) => (
-                <MenuItem value={user.id}>{user.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              <InputLabel id="user-select-label">User</InputLabel>
+              <Select
+                labelId="user-select-label"
+                id="user-select"
+                value={this.state.selectedUser}
+                onChange={this.handleUserChange}
+                label="Club"
+              >
+                {this.state.users.map((user) => (
+                  <MenuItem value={user.id}>{user.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         )}
 
-
         {this.state.selectedUserId !== 0 && (
-        <Box sx={{ width: "100%", textAlign: "center" }}>
-          <Typography variant="h1" gutterBottom>
-            {this.state.selectedUserName}'s
-            <br />
-            Club
-          </Typography>
+          <Box sx={{ width: "100%", textAlign: "center" }}>
+            <Typography variant="h1" gutterBottom>
+              {this.state.selectedUserName}'s
+              <br />
+              Club
+            </Typography>
 
-          <Typography variant="h2" gutterBottom>
-            {this.state.players.length} Players
-          </Typography>
+            <Typography variant="h2" gutterBottom>
+              {this.state.players.length} Players
+            </Typography>
 
-          <Typography variant="h2" gutterBottom>
-            {this.state.nationsCount.length} Countries
-          </Typography>
+            <Typography variant="h2" gutterBottom>
+              {this.state.nationsCount.length} Countries
+            </Typography>
 
-          {!this.state.singleCountryView && (
+            {!this.state.singleCountryView && (
+              <Grid container>
+                <Grid item xs={3}></Grid>
+                <Grid item xs={6}>
+                  <Grid container>
+                    {this.state.nationsCount.map((nation) => (
+                      <Grid item xs={1}>
+                        <Nation
+                          onClick={this.expandNation}
+                          nationId={nation.nationId}
+                          count={nation.count}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Grid>
+              </Grid>
+            )}
+
+            {this.state.singleCountryView && (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Nation
+                  onClick={this.multiCountryView}
+                  nationId={this.state.singleCountryId}
+                />
+              </Box>
+            )}
+
+            {this.state.singleCountryView && (
+              <Grid
+                container
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+              >
+                {this.state.singleCountryPlayers.map((player) => (
+                  <Grid item xs={1}>
+                    <PlayerCard small={true} player={player} />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+            <Typography variant="h2" gutterBottom>
+              {this.state.leaguesCount.length} Leagues
+            </Typography>
+
             <Grid container>
               <Grid item xs={3}></Grid>
               <Grid item xs={6}>
                 <Grid container>
-                  {this.state.nationsCount.map((nation) => (
+                  {this.state.leaguesCount.map((league) => (
                     <Grid item xs={1}>
-                      <Nation
-                        onClick={this.expandNation}
-                        nationId={nation.nationId}
-                        count={nation.count}
-                      />
+                      <League leagueId={league.leagueId} count={league.count} />
                     </Grid>
                   ))}
                 </Grid>
               </Grid>
             </Grid>
-          )}
 
-          {this.state.singleCountryView && (
+            <Typography variant="h2" gutterBottom>
+              {this.state.clubsCount.length} Clubs
+            </Typography>
+
+            <Grid container>
+              <Grid item xs={3}></Grid>
+              <Grid item xs={6}>
+                <Grid container>
+                  {this.state.clubsCount.map((club) => (
+                    <Grid item xs={1}>
+                      <Club teamId={club.teamId} count={club.count} />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid container>
+              <Grid item xs={3}></Grid>
+              <Grid item xs={6}>
+                <Grid container>
+                  <Grid item xs={4}>
+                    <Grid container>
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={BronzeCommon}
+                          cardAmount={this.state.bronzeCommon}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={BronzeRare}
+                          cardAmount={this.state.bronzeRare}
+                        />
+                      </Grid>
+                      <Grid item xs={3}></Grid>
+
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={BronzeCommon}
+                          cardAmount={this.state.bronze}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Grid container>
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={SilverCommon}
+                          cardAmount={this.state.silverCommon}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={SilverRare}
+                          cardAmount={this.state.silverRare}
+                        />
+                      </Grid>
+                      <Grid item xs={3}></Grid>
+
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={SilverCommon}
+                          cardAmount={this.state.silver}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Grid container>
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={GoldCommon}
+                          cardAmount={this.state.goldCommon}
+                        />
+                      </Grid>
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={GoldRare}
+                          cardAmount={this.state.goldRare}
+                        />
+                      </Grid>
+                      <Grid item xs={3}></Grid>
+
+                      <Grid item xs={6}>
+                        <SimpleCard
+                          textColor={"rgb(58,39,23)"}
+                          cardType={GoldCommon}
+                          cardAmount={this.state.gold}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+
             <Box display="flex" justifyContent="center" alignItems="center">
-              <Nation
-                onClick={this.multiCountryView}
-                nationId={this.state.singleCountryId}
-              />
+              <Typography variant="h4" gutterBottom>
+                Tradeable players by value
+              </Typography>
             </Box>
-          )}
 
-          {this.state.singleCountryView && (
-            <Grid container   direction="row"
-            alignItems="center"
-            justifyContent="center">
-                  {this.state.singleCountryPlayers.map((player) => (
-                    <Grid item xs={1}>
-                      <PlayerCard small={true} player={player} />
-                    </Grid>
-                  ))}
-            </Grid>
-          )}
-          <Typography variant="h2" gutterBottom>
-            {this.state.leaguesCount.length} Leagues
-          </Typography>
-
-          <Grid container>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Grid container>
-                {this.state.leaguesCount.map((league) => (
-                  <Grid item xs={1}>
-                    <League leagueId={league.leagueId} count={league.count} />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Typography variant="h2" gutterBottom>
-            {this.state.clubsCount.length} Clubs
-          </Typography>
-
-          <Grid container>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Grid container>
-                {this.state.clubsCount.map((club) => (
-                  <Grid item xs={1}>
-                    <Club teamId={club.teamId} count={club.count} />
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid container>
-            <Grid item xs={3}></Grid>
-            <Grid item xs={6}>
-              <Grid container>
-                <Grid item xs={4}>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={BronzeCommon}
-                        cardAmount={this.state.bronzeCommon}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={BronzeRare}
-                        cardAmount={this.state.bronzeRare}
-                      />
-                    </Grid>
-                    <Grid item xs={3}></Grid>
-
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={BronzeCommon}
-                        cardAmount={this.state.bronze}
-                      />
-                    </Grid>
-                  </Grid>
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {tradeablePlayersByValue.map((player) => (
+                <Grid item xs={2}>
+                  <PlayerCard player={player} />
                 </Grid>
-                <Grid item xs={4}>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={SilverCommon}
-                        cardAmount={this.state.silverCommon}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={SilverRare}
-                        cardAmount={this.state.silverRare}
-                      />
-                    </Grid>
-                    <Grid item xs={3}></Grid>
-
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={SilverCommon}
-                        cardAmount={this.state.silver}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={4}>
-                  <Grid container>
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={GoldCommon}
-                        cardAmount={this.state.goldCommon}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={GoldRare}
-                        cardAmount={this.state.goldRare}
-                      />
-                    </Grid>
-                    <Grid item xs={3}></Grid>
-
-                    <Grid item xs={6}>
-                      <SimpleCard
-                        textColor={"rgb(58,39,23)"}
-                        cardType={GoldCommon}
-                        cardAmount={this.state.gold}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
+              ))}
             </Grid>
-          </Grid>
 
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Typography variant="h4" gutterBottom>
-              Tradeable players by value
-            </Typography>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            ></Box>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Typography variant="h4" gutterBottom>
+                Untradeable players by value
+              </Typography>
+            </Box>
+
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {untradeablePlayersByValue.map((player) => (
+                <Grid item xs={2}>
+                  <PlayerCard player={player} />
+                </Grid>
+              ))}
+            </Grid>
+
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Typography variant="h4" gutterBottom>
+                Most expensive loan player
+              </Typography>
+            </Box>
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <PlayerCard player={this.state.mostExpensiveLoanPlayer} />
+            </Box>
           </Box>
-
-          <Grid container   direction="row"
-            alignItems="center"
-            justifyContent="center">
-                  {tradeablePlayersByValue.map((player) => (
-                    <Grid item xs={2}>
-                      <PlayerCard player={player} />
-                    </Grid>
-                  ))}
-          </Grid>
-
-
-          <Box display="flex" justifyContent="center" alignItems="center">
-          </Box>
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Typography variant="h4" gutterBottom>
-              Untradeable players by value
-            </Typography>
-          </Box>
-
-          <Grid container   direction="row"
-            alignItems="center"
-            justifyContent="center">
-                  {untradeablePlayersByValue.map((player) => (
-                    <Grid item xs={2}>
-                      <PlayerCard player={player} />
-                    </Grid>
-                  ))}
-          </Grid>
-
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Typography variant="h4" gutterBottom>
-              Most expensive loan player
-            </Typography>
-          </Box>
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <PlayerCard player={this.state.mostExpensiveLoanPlayer} />
-          </Box>
-        </Box>)
-  }
+        )}
       </ThemeProvider>
     );
   }

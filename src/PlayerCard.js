@@ -1,7 +1,18 @@
 import {BronzeCommon, BronzeRare, SilverCommon, SilverRare, GoldRare, GoldCommon, Libs, Totw, Icon, Hero, OTW, Suds} from "./CardBackgrounds";
 import Star from "./assets/star.png";
 import { ListItemButton } from "@mui/material";
-const PlayerCard = (props) => {
+import React from "react";
+import $ from 'jquery';
+class PlayerCard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      originalShowing: true,
+      dynamic1Showing: true,
+      dynamic2Showing: true,
+    };
+  }
+  render() {
     const {
       lastName,
       knownAs,
@@ -19,8 +30,9 @@ const PlayerCard = (props) => {
       def,
       loaned,
       contracts,
-      untradeable
-    } = props.player;
+      untradeable,
+      definitionId
+    } = this.props.player;
     let badge =
       "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
     let cardImage = BronzeCommon;
@@ -76,8 +88,6 @@ const PlayerCard = (props) => {
         break;
     }
 
-
-  
     const nationflag =
       "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";
   
@@ -85,13 +95,13 @@ const PlayerCard = (props) => {
       "https://static.wefut.com/assets/images/fut23/playeravatars/" +
       playerId +
       ".png";
-    /* let dynamic = "https://static.wefut.com/assets/images/fut23/playeravatars/" + definitionId + ".png";
-    let dynamic_custom = "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" + definitionId + ".png"; */
+    let dynamic = "https://static.wefut.com/assets/images/fut23/playeravatars/" + definitionId + ".png";
+    let dynamic_custom = "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" + definitionId + ".png"; 
   
     let cardClass = '';
     cardClass = "card fifa22 " + rarityClass;
 
-    if(props.small){
+    if(this.props.small){
         cardClass += " small";
     }
 
@@ -115,7 +125,15 @@ const PlayerCard = (props) => {
             <img alt="club-badge" src={badge} className="clubbadge" />
           </a>
           <div className={"avatarholder"}>
-            <img alt="avatar" className={"dynamic avatar original"} src={original} />
+            {!this.state.dynamic1Showing && !this.state.dynamic2Showing &&  
+              <img onError={(event) => {$(event.target).hide();}} alt="avatar" className={"dynamic avatar original"} src={original} />
+            }
+            <img onError={(event) => {$(event.target).hide();
+              this.setState({dynamic1Showing: false});
+            }} alt="avatar" className={"dynamic avatar"} src={dynamic} />
+            <img onError={(event) => {$(event.target).hide();
+              this.setState({dynamic2Showing: false});
+            }} alt="avatar" className={"dynamic avatar"} src={dynamic_custom} />
           </div>
           <a href="http://localhost">
             <img alt="nationflag" src={nationflag} className={"nationflag"} />
@@ -174,4 +192,5 @@ const PlayerCard = (props) => {
       </div>
     );
   };
+}
   export default PlayerCard;
