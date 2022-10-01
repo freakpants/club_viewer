@@ -55,16 +55,6 @@ class App extends Component {
     this.multiCountryView = this.multiCountryView.bind(this);
     this.handleUserChange = this.handleUserChange.bind(this);
     this.getPlayersForUser = this.getPlayersForUser.bind(this);
-
-    // get list of users
-    axios
-      .get(process.env.REACT_APP_AJAXSERVER + "getUsers.php")
-      .then((response) => {
-        this.setState({ users: response.data });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }
 
   handleUserChange(event) {
@@ -80,7 +70,16 @@ class App extends Component {
     });
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
+    // get list of users
+    axios
+      .get(process.env.REACT_APP_AJAXSERVER + "getUsers.php")
+      .then((response) => {
+        this.setState({ users: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   getPlayersForUser() {
@@ -306,6 +305,11 @@ class App extends Component {
     );
     untradeablePlayersByValue.sort((a, b) => b.console_price - a.console_price);
 
+    let loanedPlayersByValue = this.state.players.filter(
+      (player) => player.loaned === "1"
+    );
+    loanedPlayersByValue.sort((a, b) => b.console_price - a.console_price);
+
     return (
       <ThemeProvider theme={theme}>
         <div id="top"></div>
@@ -319,6 +323,7 @@ class App extends Component {
             >
               <InputLabel id="user-select-label">User</InputLabel>
               <Select
+                defaultValue=""
                 labelId="user-select-label"
                 id="user-select"
                 value={this.state.selectedUser}
@@ -326,7 +331,7 @@ class App extends Component {
                 label="Club"
               >
                 {this.state.users.map((user) => (
-                  <MenuItem value={user.id}>{user.name}</MenuItem>
+                  <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -355,7 +360,7 @@ class App extends Component {
                 <Grid item xs={6}>
                   <Grid container>
                     {this.state.nationsCount.map((nation) => (
-                      <Grid item xs={1}>
+                      <Grid key={nation.nationId} item xs={1}>
                         <Nation
                           onClick={this.expandNation}
                           nationId={nation.nationId}
@@ -385,7 +390,7 @@ class App extends Component {
                 justifyContent="center"
               >
                 {this.state.singleCountryPlayers.map((player) => (
-                  <Grid item xs={1}>
+                  <Grid key={player.definitionId} item xs={1}>
                     <PlayerCard small={true} player={player} />
                   </Grid>
                 ))}
@@ -400,7 +405,7 @@ class App extends Component {
               <Grid item xs={6}>
                 <Grid container>
                   {this.state.leaguesCount.map((league) => (
-                    <Grid item xs={1}>
+                    <Grid key={league.leagueId} item xs={1}>
                       <League leagueId={league.leagueId} count={league.count} />
                     </Grid>
                   ))}
@@ -417,7 +422,7 @@ class App extends Component {
               <Grid item xs={6}>
                 <Grid container>
                   {this.state.clubsCount.map((club) => (
-                    <Grid item xs={1}>
+                    <Grid key={club.teamId} item xs={1}>
                       <Club teamId={club.teamId} count={club.count} />
                     </Grid>
                   ))}
@@ -527,7 +532,7 @@ class App extends Component {
               justifyContent="center"
             >
               {tradeablePlayersByValue.map((player) => (
-                <Grid item xs={2}>
+                <Grid key={player.definitionId} item xs={2}>
                   <PlayerCard player={player} />
                 </Grid>
               ))}
@@ -551,20 +556,35 @@ class App extends Component {
               justifyContent="center"
             >
               {untradeablePlayersByValue.map((player) => (
-                <Grid item xs={2}>
+                <Grid key={player.definitionId} item xs={2}>
                   <PlayerCard player={player} />
                 </Grid>
               ))}
             </Grid>
 
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+            ></Box>
             <Box display="flex" justifyContent="center" alignItems="center">
               <Typography variant="h4" gutterBottom>
-                Most expensive loan player
+                Loans by value
               </Typography>
             </Box>
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <PlayerCard player={this.state.mostExpensiveLoanPlayer} />
-            </Box>
+
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+            >
+              {loanedPlayersByValue.map((player) => (
+                <Grid key={player.definitionId} item xs={2}>
+                  <PlayerCard player={player} />
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         )}
       </ThemeProvider>

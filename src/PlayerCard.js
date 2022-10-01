@@ -1,8 +1,21 @@
-import {BronzeCommon, BronzeRare, SilverCommon, SilverRare, GoldRare, GoldCommon, Libs, Totw, Icon, Hero, OTW, Suds} from "./CardBackgrounds";
+import {
+  BronzeCommon,
+  BronzeRare,
+  SilverCommon,
+  SilverRare,
+  GoldRare,
+  GoldCommon,
+  Libs,
+  Totw,
+  Icon,
+  Hero,
+  OTW,
+  Suds,
+} from "./CardBackgrounds";
 import Star from "./assets/star.png";
 import { ListItemButton } from "@mui/material";
 import React from "react";
-import $ from 'jquery';
+import $ from "jquery";
 class PlayerCard extends React.Component {
   constructor(props) {
     super(props);
@@ -18,6 +31,7 @@ class PlayerCard extends React.Component {
       knownAs,
       console_price,
       rating,
+      weakFoot,
       rareflag,
       teamId,
       playerId,
@@ -31,12 +45,19 @@ class PlayerCard extends React.Component {
       loaned,
       contracts,
       untradeable,
-      definitionId
+      definitionId,
+      skillMoves,
+      offensiveWorkRate,
+      defensiveWorkRate,
+      min_price,
+      max_price,
     } = this.props.player;
     let badge =
       "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
     let cardImage = BronzeCommon;
-    let rarityClass = 'gold';
+    let rarityClass = "gold";
+
+    const workRates = offensiveWorkRate + "/" + defensiveWorkRate;
 
     if (parseInt(rating) > 74) {
       if (rareflag === "1") {
@@ -44,7 +65,7 @@ class PlayerCard extends React.Component {
       } else {
         cardImage = GoldCommon;
       }
-    } else if(parseInt(rating) > 64) {
+    } else if (parseInt(rating) > 64) {
       // rarityClass = 'silver';
       if (rareflag === "1") {
         cardImage = SilverRare;
@@ -60,63 +81,106 @@ class PlayerCard extends React.Component {
       }
     }
 
-  
-    switch(rareflag) {
+    switch (rareflag) {
       case "52":
         cardImage = Suds;
-        rarityClass = 'suds';
+        rarityClass = "suds";
         break;
       case "53":
         cardImage = Libs;
-        rarityClass = 'libs';
+        rarityClass = "libs";
         break;
       case "3":
         cardImage = Totw;
-        rarityClass = 'totw';
+        rarityClass = "totw";
         break;
       case "12":
         cardImage = Icon;
-        rarityClass = 'icon';
+        rarityClass = "icon";
         break;
       case "21":
         cardImage = OTW;
-        rarityClass = 'otw';
+        rarityClass = "otw";
         break;
       case "72":
         cardImage = Hero;
-        rarityClass = 'heroes';
+        rarityClass = "heroes";
         break;
     }
 
     const nationflag =
       "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";
-  
+
     let original =
       "https://static.wefut.com/assets/images/fut23/playeravatars/" +
       playerId +
       ".png";
-    let dynamic = "https://static.wefut.com/assets/images/fut23/playeravatars/" + definitionId + ".png";
-    let dynamic_custom = "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" + definitionId + ".png"; 
-  
-    let cardClass = '';
+    let dynamic =
+      "https://static.wefut.com/assets/images/fut23/playeravatars/" +
+      definitionId +
+      ".png";
+    let dynamic_custom =
+      "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" +
+      definitionId +
+      ".png";
+
+    let cardClass = "";
     cardClass = "card fifa22 " + rarityClass;
 
-    if(this.props.small){
-        cardClass += " small";
+    if (this.props.small) {
+      cardClass += " small";
     }
 
-    if(untradeable === "1"){
-        cardClass += " untradeable";
+    if (untradeable === "1") {
+      cardClass += " untradeable";
     }
-  
+
     let formatted_console_price = console_price;
-    if(parseInt(console_price) > 999){
-      formatted_console_price = (parseInt(console_price) / 1000).toFixed(0) + "K";
+    if (parseInt(console_price) > 999) {
+      formatted_console_price =
+        (parseInt(console_price) / 1000).toFixed(1) + "K";
     }
-    if(parseInt(console_price) > 999999){
-      formatted_console_price = (parseInt(console_price) / 1000000).toFixed(0) + "M";
+    if (parseInt(console_price) > 99999) {
+      formatted_console_price =
+        (parseInt(console_price) / 1000).toFixed(0) + "K";
     }
-  
+    if (parseInt(console_price) > 999999) {
+      formatted_console_price =
+        (parseInt(console_price) / 1000000).toFixed(0) + "M";
+    }
+
+    let price_range = "SBC/";
+    let prp = "Objective";
+    if (min_price != 0) {
+      let formatted_min_price = min_price;
+      if (parseInt(min_price) > 999) {
+        formatted_min_price = (parseInt(min_price) / 1000).toFixed(0) + "K";
+      }
+      if (parseInt(min_price) > 99999) {
+        formatted_min_price = (parseInt(min_price) / 1000).toFixed(0) + "K";
+      }
+      if (parseInt(min_price) > 999999) {
+        formatted_min_price = (parseInt(min_price) / 1000000).toFixed(0) + "M";
+      }
+
+      let formatted_max_price = max_price;
+      if (parseInt(max_price) > 999) {
+        formatted_max_price = (parseInt(max_price) / 1000).toFixed(0) + "K";
+      }
+      if (parseInt(max_price) > 99999) {
+        formatted_max_price = (parseInt(max_price) / 1000).toFixed(0) + "K";
+      }
+      if (parseInt(max_price) > 999999) {
+        formatted_max_price = (parseInt(max_price) / 1000000).toFixed(0) + "M";
+      }
+
+      price_range = formatted_min_price + " - " + formatted_max_price;
+      // calculate price range percentage
+      const range = parseInt(max_price) - parseInt(min_price);
+      const $range_diff = parseInt(console_price) - parseInt(min_price);
+      prp = "(" + Math.floor(($range_diff / range) * 100) + "%)";
+    }
+
     return (
       <div className={cardClass}>
         <div className={"scard"}>
@@ -125,15 +189,34 @@ class PlayerCard extends React.Component {
             <img alt="club-badge" src={badge} className="clubbadge" />
           </a>
           <div className={"avatarholder"}>
-            {!this.state.dynamic1Showing && !this.state.dynamic2Showing &&  
-              <img onError={(event) => {$(event.target).hide();}} alt="avatar" className={"dynamic avatar original"} src={original} />
-            }
-            <img onError={(event) => {$(event.target).hide();
-              this.setState({dynamic1Showing: false});
-            }} alt="avatar" className={"dynamic avatar"} src={dynamic} />
-            <img onError={(event) => {$(event.target).hide();
-              this.setState({dynamic2Showing: false});
-            }} alt="avatar" className={"dynamic avatar"} src={dynamic_custom} />
+            {!this.state.dynamic1Showing && !this.state.dynamic2Showing && (
+              <img
+                onError={(event) => {
+                  $(event.target).hide();
+                }}
+                alt="avatar"
+                className={"dynamic avatar original"}
+                src={original}
+              />
+            )}
+            <img
+              onError={(event) => {
+                $(event.target).hide();
+                this.setState({ dynamic1Showing: false });
+              }}
+              alt="avatar"
+              className={"dynamic avatar"}
+              src={dynamic}
+            />
+            <img
+              onError={(event) => {
+                $(event.target).hide();
+                this.setState({ dynamic2Showing: false });
+              }}
+              alt="avatar"
+              className={"dynamic avatar"}
+              src={dynamic_custom}
+            />
           </div>
           <a href="http://localhost">
             <img alt="nationflag" src={nationflag} className={"nationflag"} />
@@ -157,7 +240,9 @@ class PlayerCard extends React.Component {
             </div>
           </div>
           <div className="name darken">
-            <span className="marquee ">{knownAs !== "" && knownAs !== "---" ? knownAs : lastName}</span>
+            <span className="marquee ">
+              {knownAs !== "" && knownAs !== "---" ? knownAs : lastName}
+            </span>
           </div>
           <div className="name-border"></div>
           <div className="bottom-border"></div>
@@ -168,29 +253,30 @@ class PlayerCard extends React.Component {
           )}
           <div className="skill-container-wrapper no-promo prices">
             <div className="skill-container work">
-              <span className="skillvalue"></span>
+              <span className="skillvalue">{workRates}</span>
               <span className="skilllabel">WR</span>
             </div>
             <div className="skill-container skill">
-              <span className="skillvalue"></span>
+              <span className="skillvalue">{skillMoves}</span>
               <img alt="star" src={Star} className="star" />
               <span className="skilllabel">SM</span>
             </div>
-  
+
             <div className="skill-container weak">
-              <span className="skillvalue"></span>
+              <span className="skillvalue">{weakFoot}</span>
               <img alt="star" src={Star} className="star" />
               <span className="skilllabel">WF</span>
             </div>
             <div className="skill-container price-range"></div>
-            <div className={"skill-container price"}>{formatted_console_price}</div>
-            <div className="price-range"></div>
+            <div className={"skill-container price"}>
+              {formatted_console_price}
+            </div>
+            <div className="price-range">{price_range}</div>
+            <div class="price-range">{prp}</div>
           </div>
-
-          
         </div>
       </div>
     );
-  };
+  }
 }
-  export default PlayerCard;
+export default PlayerCard;
