@@ -52,6 +52,7 @@ class App extends Component {
       countryListExpanded: false,
       leagueListExpanded: false,
       clubListExpanded: false,
+      rarities: [],
     };
 
     this.expandNation = this.expandNation.bind(this);
@@ -94,6 +95,16 @@ class App extends Component {
       .get(process.env.REACT_APP_AJAXSERVER + "getUsers.php")
       .then((response) => {
         this.setState({ users: response.data });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    // get rarities
+    axios
+      .get(process.env.REACT_APP_AJAXSERVER + "getRarities.php")
+      .then((response) => {
+        console.log(response.data);
+        this.setState({ rarities: response.data });
       })
       .catch((error) => {
         console.log(error);
@@ -409,7 +420,7 @@ class App extends Component {
               >
                 {this.state.singleCountryPlayers.map((player) => (
                   <Grid key={player.definitionId} item xs={1}>
-                    <PlayerCard small={true} player={player} />
+                    <PlayerCard small={true} player={player} rarities={this.state.rarities} />
                   </Grid>
                 ))}
               </Grid>
@@ -555,7 +566,7 @@ class App extends Component {
             >
               {tradeablePlayersByValue.map((player) => (
                 <Grid key={player.definitionId} item xs={2}>
-                  <PlayerCard player={player} />
+                  <PlayerCard player={player} rarities={this.state.rarities} />
                 </Grid>
               ))}
             </Grid>
@@ -579,7 +590,7 @@ class App extends Component {
             >
               {untradeablePlayersByValue.map((player) => (
                 <Grid key={player.definitionId} item xs={2}>
-                  <PlayerCard player={player} />
+                  <PlayerCard player={player} rarities={this.state.rarities} />
                 </Grid>
               ))}
             </Grid>
@@ -603,7 +614,7 @@ class App extends Component {
             >
               {loanedPlayersByValue.map((player) => (
                 <Grid key={player.definitionId} item xs={2}>
-                  <PlayerCard player={player} />
+                  <PlayerCard player={player} rarities={this.state.rarities} />
                 </Grid>
               ))}
             </Grid>

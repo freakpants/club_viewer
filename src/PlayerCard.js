@@ -5,12 +5,6 @@ import {
   SilverRare,
   GoldRare,
   GoldCommon,
-  Libs,
-  Totw,
-  Icon,
-  Hero,
-  OTW,
-  Suds,
 } from "./CardBackgrounds";
 import Star from "./assets/star.png";
 import { ListItemButton } from "@mui/material";
@@ -20,9 +14,6 @@ class PlayerCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      originalShowing: true,
-      dynamic1Showing: true,
-      dynamic2Showing: true,
     };
   }
   render() {
@@ -51,7 +42,11 @@ class PlayerCard extends React.Component {
       defensiveWorkRate,
       min_price,
       max_price,
+      bestQualityImage,
+      mainPosition,
     } = this.props.player;
+
+    const { rarities } = this.props;
     let badge =
       "https://cdn.futbin.com/content/fifa23/img/clubs/" + teamId + ".png";
     let cardImage = BronzeCommon;
@@ -81,51 +76,77 @@ class PlayerCard extends React.Component {
       }
     }
 
-    switch (rareflag) {
-      case "52":
-        cardImage = Suds;
-        rarityClass = "suds";
-        break;
-      case "53":
-        cardImage = Libs;
-        rarityClass = "libs";
-        break;
-      case "3":
-        cardImage = Totw;
-        rarityClass = "totw";
-        break;
-      case "12":
-        cardImage = Icon;
-        rarityClass = "icon";
-        break;
-      case "21":
-        cardImage = OTW;
-        rarityClass = "otw";
-        break;
-      case "72":
-        cardImage = Hero;
-        rarityClass = "heroes";
-        break;
+    let bronzesilvergold = 0;
+    if(rareflag === "3"){
+      if(parseInt(rating) > 74){
+        bronzesilvergold = 3;
+        rarityClass = "totw gold";
+      }else if(parseInt(rating) > 64){
+        bronzesilvergold = 2;
+        rarityClass = "totw silver";
+      }else{
+        bronzesilvergold = 1;
+        rarityClass = "totw bronze";
+      }
+      cardImage = false;
+    }
+
+    if (rareflag > 3) {
+      // look up rareflag in rarities
+      const rarity = rarities.find((r) => r.id === rareflag);
+      if (rarity) {
+        rarityClass = rarity.rareClass;
+      }
+      cardImage = false;
     }
 
     const nationflag =
       "https://www.futwiz.com/assets/img/fifa22/flags/" + nationId + ".png";
 
-    let original =
-      "https://static.wefut.com/assets/images/fut23/playeravatars/" +
-      playerId +
-      ".png";
-    let dynamic =
-      "https://static.wefut.com/assets/images/fut23/playeravatars/" +
-      definitionId +
-      ".png";
-    let dynamic_custom =
-      "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" +
-      definitionId +
-      ".png";
+    let src = "";
+    let imageClass = "";
+    switch (bestQualityImage) {
+      case "unchecked":
+        src = "";
+        break;
+      case "wefutDynamic":
+        src =
+          "https://static.wefut.com/assets/images/fut23/playeravatars/custom/" +
+          definitionId +
+          ".png";
+        imageClass = "custom";
+        break;
+      case "futbinDynamic":
+        src =
+          "https://cdn.futbin.com/content/fifa23/img/players/p" +
+          definitionId +
+          ".png";
+        imageClass = "custom";
+        break;
+      case "wefut":
+        src =
+          "https://static.wefut.com/assets/images/fut23/playeravatars/" +
+          playerId +
+          ".png";
+        imageClass = "original";
+      case "futbin":
+        src =
+          "https://cdn.futbin.com/content/fifa23/img/players/" +
+          playerId +
+          ".png";
+        imageClass = "original";
+        break;
+      case "futggDynamic":
+        src =
+          "https://game-assets.fut.gg/cdn-cgi/image/quality=100,format=auto,width=300/2023/players/" +
+          definitionId +
+          ".png";
+        imageClass = "custom";
+        break;
+    }
 
     let cardClass = "";
-    cardClass = "card fifa22 " + rarityClass;
+    cardClass = "" + rarityClass;
 
     if (this.props.small) {
       cardClass += " small";
@@ -182,97 +203,145 @@ class PlayerCard extends React.Component {
     }
 
     return (
-      <div className={cardClass}>
-        <div className={"scard"}>
-          <img alt="player-card" className={"player-card"} src={cardImage} />
-          <a href="http://localhost">
-            <img alt="club-badge" src={badge} className="clubbadge" />
-          </a>
-          <div className={"avatarholder"}>
-            {!this.state.dynamic1Showing && !this.state.dynamic2Showing && (
-              <img
-                onError={(event) => {
-                  $(event.target).hide();
-                }}
-                alt="avatar"
-                className={"dynamic avatar original"}
-                src={original}
-              />
-            )}
-            <img
-              onError={(event) => {
-                $(event.target).hide();
-                this.setState({ dynamic1Showing: false });
-              }}
-              alt="avatar"
-              className={"dynamic avatar"}
-              src={dynamic}
-            />
-            <img
-              onError={(event) => {
-                $(event.target).hide();
-                this.setState({ dynamic2Showing: false });
-              }}
-              alt="avatar"
-              className={"dynamic avatar"}
-              src={dynamic_custom}
-            />
-          </div>
-          <a href="http://localhost">
-            <img alt="nationflag" src={nationflag} className={"nationflag"} />
-          </a>
-          <div className={"attributes"}>
-            <div className={"middle-border"}></div>
-            <span className={"pace"}>{pac}</span>
-            <span className={"shooting"}>{sho}</span>
-            <span className={"passing"}>{pas}</span>
-            <span className={"dribbling"}>{dri}</span>
-            <span className={"defending"}>{def}</span>
-            <span className={"heading"}>{phy}</span>
-          </div>
-          <div className={"ratingholder"}>
-            <span className={"rating"}>{rating}</span>
-          </div>
-          <div className={"positions"}>
-            <div className={"main_position"}></div>
-            <div className="alt_positions">
-              <span className="alt_position single"></span>
-            </div>
-          </div>
-          <div className="name darken">
-            <span className="marquee ">
-              {knownAs !== "" && knownAs !== "---" ? knownAs : lastName}
+      <div class="card__wrapper " data-rareflag="79">
+        {parseInt(loaned) > 0 && (
+          <div class="ut-item-player-status--loan">{contracts}</div>
+        )}
+        <div class={"card__wrapper__item " + cardClass} >
+          <img
+            class="card__wrapper__item__bg"
+            src={
+              cardImage
+                ? cardImage
+                : "https://freakpants.ch/fut/php/cards/cards_bg_e_1_" +
+                  rareflag +
+                  "_" + bronzesilvergold + ".png"
+            }
+          />
+          <img class={"card__wrapper__item__dynamic " + imageClass} src={src} />
+          <div class="card__wrapper__item__ratings">
+            <span class="card__wrapper__item__ratings__rating">
+              {rating}
+              <span class="card__wrapper__item__ratings__rating__diff"></span>
             </span>
+            <span class="card__wrapper__item__ratings__position">
+              {mainPosition}
+            </span>
+            <div class="card__wrapper__item__ratings__extra">
+              <div class="card__wrapper__item__ratings__divider"></div>
+              <img
+                src={nationflag}
+                class="card__wrapper__item__ratings__nation"
+              />
+              <div class="card__wrapper__item__ratings__divider"></div>
+              <img src={badge} class="card__wrapper__item__ratings__club" />
+            </div>
           </div>
-          <div className="name-border"></div>
-          <div className="bottom-border"></div>
-          <div className="position-border"></div>
-          <div className="region-border"></div>
-          {parseInt(loaned) > 0 && (
-            <div class="ut-item-player-status--loan">{contracts}</div>
-          )}
-          <div className="skill-container-wrapper no-promo prices">
-            <div className="skill-container work">
-              <span className="skillvalue">{workRates}</span>
-              <span className="skilllabel">WR</span>
+          <div class="card__wrapper__item__name">
+            {knownAs !== "" && knownAs !== "---" ? knownAs : lastName}
+          </div>
+          <div class="card__wrapper__item__stats">
+            <div class="card__wrapper__item__stats__dividers">
+              <div class="card__wrapper__item__stats__dividers__hor"></div>
+              <div class="card__wrapper__item__stats__dividers__ver"></div>
+              <div class="card__wrapper__item__stats__dividers__horxs"></div>
             </div>
-            <div className="skill-container skill">
-              <span className="skillvalue">{skillMoves}</span>
-              <img alt="star" src={Star} className="star" />
-              <span className="skilllabel">SM</span>
+            <div class="card__wrapper__item__stats__row">
+              <div class="card__wrapper__item__stats__row__cell">
+                <span class="card__wrapper__item__stats__row__cell__value">
+                  {pac}
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__label">
+                  PAC
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__diff pos"></span>
+              </div>
+              <div class="card__wrapper__item__stats__row__cell">
+                <span class="card__wrapper__item__stats__row__cell__value">
+                  {dri}
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__label">
+                  DRI
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__diff pos"></span>
+              </div>
             </div>
+            <div class="card__wrapper__item__stats__row">
+              <div class="card__wrapper__item__stats__row__cell">
+                <span class="card__wrapper__item__stats__row__cell__value">
+                  {sho}
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__label">
+                  SHO
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__diff pos"></span>
+              </div>
+              <div class="card__wrapper__item__stats__row__cell">
+                <span class="card__wrapper__item__stats__row__cell__value">
+                  {def}
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__label">
+                  DEF
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__diff pos"></span>
+              </div>
+            </div>
+            <div class="card__wrapper__item__stats__row">
+              <div class="card__wrapper__item__stats__row__cell">
+                <span class="card__wrapper__item__stats__row__cell__value">
+                  {pas}
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__label">
+                  PAS
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__diff pos"></span>
+              </div>
+              <div class="card__wrapper__item__stats__row__cell">
+                <span class="card__wrapper__item__stats__row__cell__value">
+                  {phy}
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__label">
+                  PHY
+                </span>
+                <span class="card__wrapper__item__stats__row__cell__diff pos"></span>
+              </div>
+            </div>
+            <div class="card__wrapper__item__pricing">
+              <div>
+                <img
+                  src="https://cdn.futbin.com/design/img/logos/small/ps_blue.png"
+                  title="Console market"
+                />
+                <img
+                  src="https://cdn.futbin.com/design/img/logos/small/xbox_green.png"
+                  title="Console market"
+                />
+                <span class="card__wrapper__item__pricing__price">{formatted_console_price}</span> |
+                <img
+                  src="https://cdn.futbin.com/design/img/logos/small/pc_orange.png"
+                  title="PC market"
+                />
+                <span class="card__wrapper__item__pricing__price"></span>
+              </div>
+              <div class="card__wrapper__item__pricing__pricerange">
+               {price_range}
+              </div>
+            </div>
+          </div>
 
-            <div className="skill-container weak">
-              <span className="skillvalue">{weakFoot}</span>
-              <img alt="star" src={Star} className="star" />
-              <span className="skilllabel">WF</span>
-            </div>
-            <div className="skill-container price-range"></div>
-            <div className={"skill-container price"}>
-              {formatted_console_price}
-            </div>
-            <div className="price-range">{price_range}</div>
-            <div class="price-range">{prp}</div>
+          <div class="card__wrapper__item__alts"></div>
+
+          <div class="card__wrapper__item__extra no-promo">
+            <span>left</span>
+            <span>L/L WR</span>
+            <span data-skill-moves-diff="0">
+              4<img src="https://freakpants.ch/fut/php/star.png" title="Star" />{" "}
+              SM
+            </span>
+            <span data-weak-foot-diff="0">
+              4<img src="https://freakpants.ch/fut/php/star.png" title="Star" />{" "}
+              WF
+            </span>
           </div>
         </div>
       </div>
