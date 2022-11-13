@@ -339,6 +339,12 @@ class App extends Component {
     );
     loanedPlayersByValue.sort((a, b) => b.console_price - a.console_price);
 
+    // filter untradeable players by rareflag
+    untradeablePlayersByValue = untradeablePlayersByValue.filter(
+      (player) => player.rareflag === "128"
+    );
+
+
     return (
       <ThemeProvider theme={theme}>
         <div id="top"></div>
@@ -419,7 +425,7 @@ class App extends Component {
                 justifyContent="center"
               >
                 {this.state.singleCountryPlayers.map((player) => (
-                  <Grid key={player.definitionId} item xs={1}>
+                  <Grid key={player.definitionId} item xs={3}>
                     <PlayerCard small={true} player={player} rarities={this.state.rarities} />
                   </Grid>
                 ))}
