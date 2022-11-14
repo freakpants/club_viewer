@@ -116,3 +116,23 @@ body{
   display:flex;
   justify-content: center;
 }
+
+.cardContainer{display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 5rem;
+}
+
+.placeholder.card__wrapper__item__name{
+  top: 50%;
+}
+
+.placeholder .card__wrapper__item__ratings{
+  left: 40%;
+  top: 20%;
+  font-size: 60px;
+}
+
+.badge .card__wrapper__item__dynamic.original{
+  top: 28.3%;
+}

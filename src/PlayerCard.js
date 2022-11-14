@@ -202,8 +202,13 @@ class PlayerCard extends React.Component {
       prp = "(" + Math.floor(($range_diff / range) * 100) + "%)";
     }
 
+    let badgeOrFull = 'e';
+    if (this.props.badge) {
+      badgeOrFull = 's'
+    }
+
     return (
-      <div class="card__wrapper " data-rareflag="79">
+      <div style={this.props.style} className={"card__wrapper " + (this.props.badge ? "badge" : "")} data-rareflag="79">
         {parseInt(loaned) > 0 && (
           <div class="ut-item-player-status--loan">{contracts}</div>
         )}
@@ -213,7 +218,7 @@ class PlayerCard extends React.Component {
             src={
               cardImage
                 ? cardImage
-                : "https://freakpants.ch/fut/php/cards/cards_bg_e_1_" +
+                : "https://freakpants.ch/fut/php/cards/cards_bg_" + badgeOrFull +  "_1_" +
                   rareflag +
                   "_" + bronzesilvergold + ".png"
             }
@@ -240,6 +245,7 @@ class PlayerCard extends React.Component {
           <div class="card__wrapper__item__name">
             {knownAs !== "" && knownAs !== "---" ? knownAs : lastName}
           </div>
+          {!this.props.badge && (
           <div class="card__wrapper__item__stats">
             <div class="card__wrapper__item__stats__dividers">
               <div class="card__wrapper__item__stats__dividers__hor"></div>
@@ -306,6 +312,8 @@ class PlayerCard extends React.Component {
                 <span class="card__wrapper__item__stats__row__cell__diff pos"></span>
               </div>
             </div>
+
+
             <div class="card__wrapper__item__pricing">
               <div>
                 <img
@@ -328,9 +336,10 @@ class PlayerCard extends React.Component {
               </div>
             </div>
           </div>
+    )}
 
           <div class="card__wrapper__item__alts"></div>
-
+          {!this.props.badge && (
           <div class="card__wrapper__item__extra no-promo">
             <span>left</span>
             <span>L/L WR</span>
@@ -343,6 +352,7 @@ class PlayerCard extends React.Component {
               WF
             </span>
           </div>
+          )}
         </div>
       </div>
     );

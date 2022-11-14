@@ -53,6 +53,7 @@ class App extends Component {
       leagueListExpanded: false,
       clubListExpanded: false,
       rarities: [],
+      wcPlayers: [],
     };
 
     this.expandNation = this.expandNation.bind(this);
@@ -108,6 +109,13 @@ class App extends Component {
       })
       .catch((error) => {
         console.log(error);
+      });
+    // get wc players
+    axios
+      .get(process.env.REACT_APP_AJAXSERVER + "getWcPlayers.php")
+      .then((response) => {
+        console.log(response.data);
+        this.setState({ wcPlayers: response.data });
       });
   }
 
@@ -299,7 +307,11 @@ class App extends Component {
   expandNation(nationId) {
     // console.log("Click happened");
     // set singleCountryView in state to true
-    this.setState({ singleCountryView: true, singleCountryId: nationId, countryListExpanded: false });
+    this.setState({
+      singleCountryView: true,
+      singleCountryId: nationId,
+      countryListExpanded: false,
+    });
     // filter players array to only include players from that nation
     let singleCountryPlayers = this.state.players.filter(
       (player) => player.nationId === nationId
@@ -344,6 +356,19 @@ class App extends Component {
       (player) => player.rareflag === "128"
     );
 
+    let singleCountryWcPlayers = this.state.wcPlayers.filter(
+      (player) => player.nationId === this.state.singleCountryId
+    );
+
+    // check if the players in singleCountryWcPLayers are in the players array
+    singleCountryWcPlayers.forEach((wcPlayer) => {
+      let player = this.state.players.find(
+        (player) => player.definitionId === wcPlayer.definitionId
+      );
+      if (player) {
+        wcPlayer.exists = true;
+      }
+    });
 
     return (
       <ThemeProvider theme={theme}>
@@ -366,7 +391,9 @@ class App extends Component {
                 label="Club"
               >
                 {this.state.users.map((user) => (
-                  <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
+                  <MenuItem key={user.id} value={user.id}>
+                    {user.name}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -385,7 +412,11 @@ class App extends Component {
               {this.state.players.length} Players
             </Typography>
 
-            <Typography variant="h2" gutterBottom onClick={this.toggleCountryList}>
+            <Typography
+              variant="h2"
+              gutterBottom
+              onClick={this.toggleCountryList}
+            >
               {this.state.nationsCount.length} Countries
             </Typography>
 
@@ -416,38 +447,87 @@ class App extends Component {
                 />
               </Box>
             )}
-
             {this.state.singleCountryView && (
-              <Grid
-                container
-                direction="row"
-                alignItems="center"
-                justifyContent="center"
-              >
-                {this.state.singleCountryPlayers.map((player) => (
-                  <Grid key={player.definitionId} item xs={3}>
-                    <PlayerCard small={true} player={player} rarities={this.state.rarities} />
-                  </Grid>
-                ))}
-              </Grid>
+              <div className={"cardContainer"}>
+                {singleCountryWcPlayers.map((player) => {
+                  return player.exists ? (
+
+                      <PlayerCard
+                      key={player.definitionId}
+                        badge={true}
+                        small={true}
+                        player={player}
+                        rarities={this.state.rarities}
+                        style={{
+                          transform: "scale(.4)",
+                          width: "160px",
+                          height: "145px",
+                          marginBottom: "28.8px",
+                          WebkitTransformOriginX: "left",
+                          WebkitTransformOriginY: "top",
+                        }}
+                      />
+                  ) : (
+                    <div
+                      key={player.definitionId}
+                      className={"card__wrapper"}
+                      style={{
+                        transform: "scale(.4)",
+                        width: "160px",
+                        height: "145px",
+                        marginBottom: "28.8px",
+                        WebkitTransformOriginX: "left",
+                        WebkitTransformOriginY: "top",
+                      }}
+                    >
+                        <div className={"card__wrapper__item placeholder"}>
+                          <img
+                            classNAme={"card__wrapper__item__bg"}
+                            src={
+                              "https://freakpants.ch/fut/php/cards/placeholder.png"
+                            }
+                          />
+
+                          <div class="card__wrapper__item__ratings">
+                            <span class="card__wrapper__item__ratings__position">
+                              {player.mainPosition}
+                            </span>
+                          </div>
+                          <div className={"card__wrapper__item__name"}>
+                            {player.knownAs !== "" && player.knownAs !== "---"
+                              ? player.knownAs
+                              : player.lastName}
+                          </div>
+                        </div>
+                      </div>
+                  );
+                })}
+              </div>
             )}
-            <Typography variant="h2" gutterBottom onClick={this.toggleLeagueList}>
+            <Typography
+              variant="h2"
+              gutterBottom
+              onClick={this.toggleLeagueList}
+            >
               {this.state.leaguesCount.length} Leagues
             </Typography>
 
             {this.state.leagueListExpanded && (
-            <Grid container>
-              <Grid item xs={3}></Grid>
-              <Grid item xs={6}>
-                <Grid container>
-                  {this.state.leaguesCount.map((league) => (
-                    <Grid key={league.leagueId} item xs={1}>
-                      <League leagueId={league.leagueId} count={league.count} />
-                    </Grid>
-                  ))}
+              <Grid container>
+                <Grid item xs={3}></Grid>
+                <Grid item xs={6}>
+                  <Grid container>
+                    {this.state.leaguesCount.map((league) => (
+                      <Grid key={league.leagueId} item xs={1}>
+                        <League
+                          leagueId={league.leagueId}
+                          count={league.count}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
             )}
 
             <Typography variant="h2" gutterBottom onClick={this.toggleClubList}>
@@ -455,18 +535,18 @@ class App extends Component {
             </Typography>
 
             {this.state.clubListExpanded && (
-            <Grid container>
-              <Grid item xs={3}></Grid>
-              <Grid item xs={6}>
-                <Grid container>
-                  {this.state.clubsCount.map((club) => (
-                    <Grid key={club.teamId} item xs={1}>
-                      <Club teamId={club.teamId} count={club.count} />
-                    </Grid>
-                  ))}
+              <Grid container>
+                <Grid item xs={3}></Grid>
+                <Grid item xs={6}>
+                  <Grid container>
+                    {this.state.clubsCount.map((club) => (
+                      <Grid key={club.teamId} item xs={1}>
+                        <Club teamId={club.teamId} count={club.count} />
+                      </Grid>
+                    ))}
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
             )}
 
             <Grid container>
